@@ -3,19 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Hostel Management</title>
 
 <style>
-
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
     font-family: Arial, sans-serif;
 }
 
 body {
+    margin: 0;
     background: #f4f6f8;
     color: #222;
 }
@@ -23,13 +20,12 @@ body {
 header {
     background: #182848;
     color: white;
-    padding: 25px 20px;
     text-align: center;
+    padding: 24px 15px;
 }
 
 header h1 {
-    font-size: 26px;
-    margin-bottom: 6px;
+    margin: 0 0 6px;
 }
 
 .container {
@@ -42,24 +38,25 @@ header h1 {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 15px;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .stat {
     background: white;
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
 }
 
 .stat h3 {
+    margin: 0 0 8px;
     color: #666;
     font-size: 14px;
-    margin-bottom: 8px;
 }
 
 .stat p {
-    font-size: 25px;
+    margin: 0;
+    font-size: 24px;
     font-weight: bold;
 }
 
@@ -67,38 +64,34 @@ header h1 {
     background: white;
     padding: 20px;
     border-radius: 12px;
-    margin-bottom: 25px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
 }
 
 .section h2 {
-    margin-bottom: 18px;
+    margin-top: 0;
 }
 
 .rooms {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
+    gap: 14px;
 }
 
 .room {
-    padding: 18px;
+    padding: 16px;
     border-radius: 10px;
     border: 2px solid #ddd;
 }
 
 .room.vacant {
-    border-color: #2e7d32;
     background: #f1f8f2;
+    border-color: #2e7d32;
 }
 
 .room.occupied {
-    border-color: #c62828;
     background: #fff4f4;
-}
-
-.room h3 {
-    margin-bottom: 8px;
+    border-color: #c62828;
 }
 
 .form-grid {
@@ -117,7 +110,6 @@ select {
     width: 100%;
     padding: 12px;
     margin-top: 6px;
-    margin-bottom: 12px;
     border: 1px solid #ccc;
     border-radius: 7px;
     background: white;
@@ -127,61 +119,23 @@ button {
     border: none;
     padding: 11px 17px;
     border-radius: 7px;
-    cursor: pointer;
     background: #182848;
     color: white;
-    font-size: 14px;
+    cursor: pointer;
+    margin-top: 10px;
 }
 
-button:hover {
-    opacity: 0.9;
-}
-
-button.delete {
-    background: #c62828;
-}
-
-button.payment {
+button.green {
     background: #2e7d32;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th,
-td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
-}
-
-th {
-    background: #f1f3f5;
-}
-
-.balance {
-    font-weight: bold;
-}
-
-.balance.owing {
-    color: #c62828;
-}
-
-.balance.paid {
-    color: #2e7d32;
-}
-
-.empty {
-    text-align: center;
-    padding: 20px;
-    color: #777;
+button.red {
+    background: #c62828;
 }
 
 .message {
-    margin-top: 15px;
-    padding: 12px;
+    margin-top: 12px;
+    padding: 10px;
     border-radius: 7px;
     display: none;
 }
@@ -196,8 +150,52 @@ th {
     color: #c62828;
 }
 
-@media (max-width: 700px) {
+.status {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
 
+.paid {
+    background: #dff3e2;
+    color: #2e7d32;
+}
+
+.partial {
+    background: #fff1cc;
+    color: #996c00;
+}
+
+.unpaid {
+    background: #ffdede;
+    color: #c62828;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 11px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background: #f1f3f5;
+}
+
+.empty {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+}
+
+@media (max-width: 700px) {
     .stats {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -211,29 +209,22 @@ th {
     }
 
     table {
-        font-size: 12px;
         display: block;
         overflow-x: auto;
+        font-size: 12px;
     }
-
 }
-
 </style>
 </head>
 
 <body>
 
 <header>
-
-<h1>🏠 Hostel Management</h1>
-
-<p>Tenant & Payment Dashboard</p>
-
+    <h1>🏠 Hostel Management</h1>
+    <p>Monthly Rent & Tenant Dashboard</p>
 </header>
 
-
 <div class="container">
-
 
 <!-- DASHBOARD -->
 
@@ -241,7 +232,7 @@ th {
 
 <div class="stat">
 <h3>Total Rooms</h3>
-<p id="totalRooms">16</p>
+<p>16</p>
 </div>
 
 <div class="stat">
@@ -255,9 +246,26 @@ th {
 </div>
 
 <div class="stat">
-<h3>Outstanding</h3>
+<h3>Outstanding This Month</h3>
 <p id="outstanding">GH₵0</p>
 </div>
+
+</div>
+
+
+<!-- MONTH -->
+
+<div class="section">
+
+<h2>📅 Monthly Rent</h2>
+
+<label>Select Month</label>
+
+<select id="monthSelector"></select>
+
+<p style="margin-top:12px;">
+Rent is due on the <strong>1st of every month.</strong>
+</p>
 
 </div>
 
@@ -282,160 +290,101 @@ th {
 <div class="form-grid">
 
 <div>
-
 <label>Tenant Name</label>
-
-<input
-id="tenantName"
-type="text"
-placeholder="Enter tenant name">
-
+<input id="tenantName" type="text" placeholder="Enter tenant name">
 </div>
 
-
 <div>
-
 <label>Phone Number</label>
-
-<input
-id="tenantPhone"
-type="tel"
-placeholder="Enter phone number">
-
+<input id="tenantPhone" type="tel" placeholder="Enter phone number">
 </div>
 
-
 <div>
-
 <label>Room</label>
-
 <select id="tenantRoom">
-
-<option value="">
-Select a room
-</option>
-
+<option value="">Select a room</option>
 </select>
-
 </div>
-
 
 <div>
-
 <label>Monthly Rent (GH₵)</label>
-
-<input
-id="tenantRent"
-type="number"
-placeholder="Example: 1500">
-
+<input id="tenantRent" type="number" placeholder="Example: 1500">
 </div>
 
 </div>
-
 
 <button id="addTenantButton">
 Add Tenant
 </button>
 
-
-<div
-id="tenantMessage"
-class="message">
-</div>
+<div id="tenantMessage" class="message"></div>
 
 </div>
 
 
-<!-- TENANTS -->
+<!-- MONTHLY RENT STATUS -->
 
 <div class="section">
 
-<h2>👥 Tenants</h2>
+<h2>💰 Rent Status</h2>
 
-<div id="tenantTable"></div>
+<div id="rentStatus"></div>
 
 </div>
 
 
-<!-- PAYMENTS -->
+<!-- PAYMENT -->
 
 <div class="section">
 
-<h2>💰 Record Payment</h2>
+<h2>💵 Record Payment</h2>
 
 <div class="form-grid">
 
 <div>
-
 <label>Tenant</label>
 
 <select id="paymentTenant">
-
-<option value="">
-Select a tenant
-</option>
-
+<option value="">Select tenant</option>
 </select>
-
 </div>
 
-
 <div>
-
 <label>Amount (GH₵)</label>
 
 <input
 id="paymentAmount"
 type="number"
 placeholder="Enter amount">
-
 </div>
 
-
 <div>
-
 <label>Payment Method</label>
 
 <select id="paymentMethod">
-
 <option>Cash</option>
-
 <option>Mobile Money</option>
-
 <option>Bank Transfer</option>
-
 </select>
-
 </div>
-
 
 <div>
+<label>Payment Date</label>
 
-<label>Date</label>
-
-<input
-id="paymentDate"
-type="date">
-
+<input id="paymentDate" type="date">
 </div>
 
 </div>
-
 
 <button
 id="recordPaymentButton"
-class="payment">
+class="green">
 
 Record Payment
 
 </button>
 
-
-<div
-id="paymentMessage"
-class="message">
-</div>
+<div id="paymentMessage" class="message"></div>
 
 </div>
 
@@ -446,10 +395,9 @@ class="message">
 
 <h2>📜 Payment History</h2>
 
-<div id="paymentTable"></div>
+<div id="paymentHistory"></div>
 
 </div>
-
 
 </div>
 
@@ -458,66 +406,164 @@ class="message">
 
 const TOTAL_ROOMS = 16;
 
+let tenants = [];
 
-let tenants =
-JSON.parse(
-localStorage.getItem("hostelTenants")
-) || [];
+let payments = [];
+
+let selectedMonth = getCurrentMonth();
 
 
-let payments =
-JSON.parse(
-localStorage.getItem("hostelPayments")
-) || [];
+function getCurrentMonth() {
 
+const date = new Date();
+
+return date.getFullYear() + "-" +
+String(date.getMonth() + 1).padStart(2, "0");
+
+}
 
 
 function saveData() {
 
 localStorage.setItem(
-"hostelTenants",
+"hostelMonthlyTenants",
 JSON.stringify(tenants)
 );
 
 localStorage.setItem(
-"hostelPayments",
+"hostelMonthlyPayments",
 JSON.stringify(payments)
 );
 
 }
 
 
+function loadData() {
+
+tenants =
+JSON.parse(
+localStorage.getItem(
+"hostelMonthlyTenants"
+)
+) || [];
+
+payments =
+JSON.parse(
+localStorage.getItem(
+"hostelMonthlyPayments"
+)
+) || [];
+
+}
+
+
+function money(amount) {
+
+return "GH₵" +
+Number(amount).toLocaleString();
+
+}
+
 
 function showMessage(
-elementId,
-message,
+id,
+text,
 type
 ) {
 
-const element =
-document.getElementById(
-elementId
-);
+const box =
+document.getElementById(id);
 
-element.textContent =
-message;
+box.textContent = text;
 
-element.className =
+box.className =
 "message " + type;
 
-element.style.display =
-"block";
+box.style.display = "block";
 
 setTimeout(() => {
 
-element.style.display =
-"none";
+box.style.display = "none";
 
 }, 3000);
 
 }
 
 
+/* MONTH SELECTOR */
+
+function createMonths() {
+
+const select =
+document.getElementById(
+"monthSelector"
+);
+
+const now = new Date();
+
+select.innerHTML = "";
+
+for (
+let i = -12;
+i <= 12;
+i++
+) {
+
+const date =
+new Date(
+now.getFullYear(),
+now.getMonth() + i,
+1
+);
+
+const value =
+date.getFullYear() +
+"-" +
+String(
+date.getMonth() + 1
+).padStart(2, "0");
+
+const label =
+date.toLocaleString(
+"en-US",
+{
+month: "long",
+year: "numeric"
+}
+);
+
+const option =
+document.createElement(
+"option"
+);
+
+option.value = value;
+
+option.textContent = label;
+
+if (
+value === selectedMonth
+) {
+option.selected = true;
+}
+
+select.appendChild(option);
+
+}
+
+select.onchange = function() {
+
+selectedMonth =
+this.value;
+
+render();
+
+};
+
+}
+
+
+/* ADD TENANT */
 
 function addTenant() {
 
@@ -527,19 +573,16 @@ document
 .value
 .trim();
 
-
 const phone =
 document
 .getElementById("tenantPhone")
 .value
 .trim();
 
-
 const room =
 document
 .getElementById("tenantRoom")
 .value;
-
 
 const rent =
 Number(
@@ -570,8 +613,8 @@ return;
 const roomTaken =
 tenants.some(
 tenant =>
-String(tenant.room) ===
-String(room)
+Number(tenant.room) ===
+Number(room)
 );
 
 
@@ -588,7 +631,7 @@ return;
 }
 
 
-const tenant = {
+tenants.push({
 
 id: Date.now(),
 
@@ -600,35 +643,29 @@ room: Number(room),
 
 rent: rent,
 
-dateAdded:
+moveIn:
 new Date()
-.toLocaleDateString()
+.toISOString()
+.slice(0,10)
 
-};
+});
 
-
-tenants.push(tenant);
 
 saveData();
 
+document.getElementById(
+"tenantName"
+).value = "";
 
-document
-.getElementById("tenantName")
-.value = "";
+document.getElementById(
+"tenantPhone"
+).value = "";
 
-
-document
-.getElementById("tenantPhone")
-.value = "";
-
-
-document
-.getElementById("tenantRent")
-.value = "";
-
+document.getElementById(
+"tenantRent"
+).value = "";
 
 render();
-
 
 showMessage(
 "tenantMessage",
@@ -639,41 +676,81 @@ showMessage(
 }
 
 
+/* GET PAYMENTS FOR MONTH */
 
-function deleteTenant(id) {
-
-if (
-!confirm(
-"Remove this tenant?"
-)
+function getPaymentsForTenantMonth(
+tenantId,
+month
 ) {
 
-return;
-
-}
-
-
-tenants =
-tenants.filter(
-tenant =>
-tenant.id !== id
-);
-
-
-payments =
-payments.filter(
+return payments.filter(
 payment =>
-payment.tenantId !== id
+
+Number(payment.tenantId) ===
+Number(tenantId)
+
+&&
+
+payment.month === month
+
 );
-
-
-saveData();
-
-render();
 
 }
 
 
+function getPaidForTenantMonth(
+tenantId,
+month
+) {
+
+return getPaymentsForTenantMonth(
+tenantId,
+month
+)
+.reduce(
+(total, payment) =>
+total +
+Number(payment.amount),
+0
+);
+
+}
+
+
+/* RENT STATUS */
+
+function getStatus(
+rent,
+paid
+) {
+
+if (paid >= rent) {
+
+return {
+text: "PAID",
+className: "paid"
+};
+
+}
+
+if (paid > 0) {
+
+return {
+text: "PARTIAL",
+className: "partial"
+};
+
+}
+
+return {
+text: "UNPAID",
+className: "unpaid"
+};
+
+}
+
+
+/* RECORD PAYMENT */
 
 function recordPayment() {
 
@@ -682,35 +759,28 @@ Number(
 document
 .getElementById(
 "paymentTenant"
-)
-.value
+).value
 );
-
 
 const amount =
 Number(
 document
 .getElementById(
 "paymentAmount"
-)
-.value
+).value
 );
-
 
 const method =
 document
 .getElementById(
 "paymentMethod"
-)
-.value;
-
+).value;
 
 const date =
 document
 .getElementById(
 "paymentDate"
-)
-.value;
+).value;
 
 
 if (
@@ -730,7 +800,11 @@ return;
 }
 
 
-const payment = {
+const month =
+date.slice(0,7);
+
+
+payments.push({
 
 id: Date.now(),
 
@@ -740,25 +814,20 @@ amount: amount,
 
 method: method,
 
-date: date
+date: date,
 
-};
+month: month
 
+});
 
-payments.push(payment);
 
 saveData();
 
-
-document
-.getElementById(
+document.getElementById(
 "paymentAmount"
-)
-.value = "";
-
+).value = "";
 
 render();
-
 
 showMessage(
 "paymentMessage",
@@ -769,61 +838,35 @@ showMessage(
 }
 
 
-
-function getTenantPaid(
-tenantId
-) {
-
-return payments
-
-.filter(
-payment =>
-Number(payment.tenantId) ===
-Number(tenantId)
-)
-
-.reduce(
-(total, payment) =>
-total +
-Number(payment.amount),
-0
-);
-
-}
-
-
+/* ROOMS */
 
 function renderRooms() {
 
-const rooms =
+const container =
 document.getElementById(
 "rooms"
 );
 
-rooms.innerHTML = "";
-
+container.innerHTML = "";
 
 for (
-let roomNumber = 1;
-roomNumber <= TOTAL_ROOMS;
-roomNumber++
+let room = 1;
+room <= TOTAL_ROOMS;
+room++
 ) {
 
 const tenant =
 tenants.find(
-tenant =>
-Number(tenant.room) ===
-roomNumber
+t =>
+Number(t.room) === room
 );
 
-
-const room =
+const box =
 document.createElement(
 "div"
 );
 
-
-room.className =
+box.className =
 "room " +
 (
 tenant
@@ -831,36 +874,34 @@ tenant
 : "vacant"
 );
 
-
 if (tenant) {
 
-room.innerHTML = `
+box.innerHTML = `
 
-<h3>
-Room ${roomNumber}
-</h3>
+<h3>Room ${room}</h3>
 
 <p>🔴 Occupied</p>
 
 <p>
-<strong>
-${tenant.name}
-</strong>
+<strong>${tenant.name}</strong>
 </p>
 
+<p>${tenant.phone}</p>
+
 <p>
-${tenant.phone}
+Rent:
+<strong>
+${money(tenant.rent)}
+</strong>
 </p>
 
 `;
 
 } else {
 
-room.innerHTML = `
+box.innerHTML = `
 
-<h3>
-Room ${roomNumber}
-</h3>
+<h3>Room ${room}</h3>
 
 <p>🟢 Vacant</p>
 
@@ -868,14 +909,14 @@ Room ${roomNumber}
 
 }
 
-
-rooms.appendChild(room);
-
-}
+container.appendChild(box);
 
 }
 
+}
 
+
+/* ROOM SELECT */
 
 function renderRoomSelect() {
 
@@ -883,7 +924,6 @@ const select =
 document.getElementById(
 "tenantRoom"
 );
-
 
 select.innerHTML = `
 
@@ -893,20 +933,17 @@ Select a room
 
 `;
 
-
 for (
-let roomNumber = 1;
-roomNumber <= TOTAL_ROOMS;
-roomNumber++
+let room = 1;
+room <= TOTAL_ROOMS;
+room++
 ) {
 
 const occupied =
 tenants.some(
-tenant =>
-Number(tenant.room) ===
-roomNumber
+t =>
+Number(t.room) === room
 );
-
 
 if (!occupied) {
 
@@ -915,16 +952,12 @@ document.createElement(
 "option"
 );
 
-option.value =
-roomNumber;
+option.value = room;
 
 option.textContent =
-"Room " +
-roomNumber;
+"Room " + room;
 
-select.appendChild(
-option
-);
+select.appendChild(option);
 
 }
 
@@ -933,6 +966,7 @@ option
 }
 
 
+/* TENANT SELECT */
 
 function renderTenantSelect() {
 
@@ -941,15 +975,13 @@ document.getElementById(
 "paymentTenant"
 );
 
-
 select.innerHTML = `
 
 <option value="">
-Select a tenant
+Select tenant
 </option>
 
 `;
-
 
 tenants.forEach(
 tenant => {
@@ -967,30 +999,27 @@ tenant.name +
 " - Room " +
 tenant.room;
 
-select.appendChild(
-option
-);
+select.appendChild(option);
 
 });
 
 }
 
 
+/* RENT STATUS TABLE */
 
-function renderTenants() {
+function renderRentStatus() {
 
 const container =
 document.getElementById(
-"tenantTable"
+"rentStatus"
 );
-
 
 if (
 tenants.length === 0
 ) {
 
 container.innerHTML =
-
 '<div class="empty">No tenants yet.</div>';
 
 return;
@@ -1004,41 +1033,43 @@ let html = `
 
 <tr>
 
-<th>Name</th>
-
-<th>Phone</th>
-
+<th>Tenant</th>
 <th>Room</th>
-
 <th>Rent</th>
-
 <th>Paid</th>
-
 <th>Balance</th>
-
-<th>Action</th>
+<th>Status</th>
 
 </tr>
 
 `;
 
 
+let outstanding = 0;
+
+
 tenants.forEach(
 tenant => {
 
 const paid =
-getTenantPaid(
-tenant.id
+getPaidForTenantMonth(
+tenant.id,
+selectedMonth
 );
-
 
 const balance =
 Math.max(
-Number(tenant.rent) -
-paid,
+tenant.rent - paid,
 0
 );
 
+outstanding += balance;
+
+const status =
+getStatus(
+tenant.rent,
+paid
+);
 
 html += `
 
@@ -1049,43 +1080,29 @@ ${tenant.name}
 </td>
 
 <td>
-${tenant.phone}
-</td>
-
-<td>
 Room ${tenant.room}
 </td>
 
 <td>
-GH₵${Number(
-tenant.rent
-).toLocaleString()}
+${money(tenant.rent)}
 </td>
 
 <td>
-GH₵${paid.toLocaleString()}
+${money(paid)}
 </td>
 
-<td
-class="balance ${
-balance > 0
-? "owing"
-: "paid"
-}">
-
-GH₵${balance.toLocaleString()}
-
+<td>
+${money(balance)}
 </td>
 
 <td>
 
-<button
-class="delete"
-onclick="deleteTenant(${tenant.id})">
+<span
+class="status ${status.className}">
 
-Remove
+${status.text}
 
-</button>
+</span>
 
 </td>
 
@@ -1098,28 +1115,40 @@ Remove
 
 html += "</table>";
 
-container.innerHTML =
-html;
+container.innerHTML = html;
+
+
+document.getElementById(
+"outstanding"
+).textContent =
+money(outstanding);
 
 }
 
 
+/* PAYMENT HISTORY */
 
-function renderPayments() {
+function renderPaymentHistory() {
 
 const container =
 document.getElementById(
-"paymentTable"
+"paymentHistory"
+);
+
+const monthPayments =
+payments.filter(
+payment =>
+payment.month ===
+selectedMonth
 );
 
 
 if (
-payments.length === 0
+monthPayments.length === 0
 ) {
 
 container.innerHTML =
-
-'<div class="empty">No payments recorded yet.</div>';
+'<div class="empty">No payments for this month.</div>';
 
 return;
 
@@ -1133,13 +1162,9 @@ let html = `
 <tr>
 
 <th>Date</th>
-
 <th>Tenant</th>
-
 <th>Room</th>
-
 <th>Amount</th>
-
 <th>Method</th>
 
 </tr>
@@ -1147,7 +1172,7 @@ let html = `
 `;
 
 
-payments
+monthPayments
 .slice()
 .reverse()
 .forEach(
@@ -1160,37 +1185,23 @@ Number(t.id) ===
 Number(payment.tenantId)
 );
 
-
 if (!tenant) {
 return;
 }
-
 
 html += `
 
 <tr>
 
-<td>
-${payment.date}
-</td>
+<td>${payment.date}</td>
 
-<td>
-${tenant.name}
-</td>
+<td>${tenant.name}</td>
 
-<td>
-Room ${tenant.room}
-</td>
+<td>Room ${tenant.room}</td>
 
-<td>
-GH₵${Number(
-payment.amount
-).toLocaleString()}
-</td>
+<td>${money(payment.amount)}</td>
 
-<td>
-${payment.method}
-</td>
+<td>${payment.method}</td>
 
 </tr>
 
@@ -1201,71 +1212,36 @@ ${payment.method}
 
 html += "</table>";
 
-container.innerHTML =
-html;
+container.innerHTML = html;
 
 }
 
 
+/* DASHBOARD */
 
 function renderStats() {
 
 const occupied =
 tenants.length;
 
-
 const vacant =
 TOTAL_ROOMS -
 occupied;
-
-
-let outstanding = 0;
-
-
-tenants.forEach(
-tenant => {
-
-const paid =
-getTenantPaid(
-tenant.id
-);
-
-
-const balance =
-Math.max(
-Number(tenant.rent) -
-paid,
-0
-);
-
-
-outstanding +=
-balance;
-
-});
-
 
 document.getElementById(
 "occupiedRooms"
 ).textContent =
 occupied;
 
-
 document.getElementById(
 "vacantRooms"
 ).textContent =
 vacant;
 
-
-document.getElementById(
-"outstanding"
-).textContent =
-"GH₵" +
-outstanding.toLocaleString();
-
 }
 
 
+/* RENDER */
 
 function render() {
 
@@ -1275,15 +1251,16 @@ renderRoomSelect();
 
 renderTenantSelect();
 
-renderTenants();
-
-renderPayments();
-
 renderStats();
+
+renderRentStatus();
+
+renderPaymentHistory();
 
 }
 
 
+/* BUTTONS */
 
 document
 .getElementById(
@@ -1293,7 +1270,6 @@ document
 "click",
 addTenant
 );
-
 
 document
 .getElementById(
@@ -1305,15 +1281,21 @@ recordPayment
 );
 
 
-document
-.getElementById(
+/* DATE */
+
+document.getElementById(
 "paymentDate"
-)
-.value =
+).value =
 new Date()
 .toISOString()
-.split("T")[0];
+.slice(0,10);
 
+
+/* START */
+
+loadData();
+
+createMonths();
 
 render();
 
