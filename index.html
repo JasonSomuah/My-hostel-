@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Hostel Management</title>
 
 <style>
+
 * {
     box-sizing: border-box;
     font-family: Arial, sans-serif;
@@ -21,7 +23,7 @@ header {
     background: #182848;
     color: white;
     text-align: center;
-    padding: 24px 15px;
+    padding: 25px 15px;
 }
 
 header h1 {
@@ -79,9 +81,15 @@ header h1 {
 }
 
 .room {
-    padding: 16px;
+    padding: 17px;
     border-radius: 10px;
     border: 2px solid #ddd;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.room:hover {
+    transform: translateY(-2px);
 }
 
 .room.vacant {
@@ -92,6 +100,10 @@ header h1 {
 .room.occupied {
     background: #fff4f4;
     border-color: #c62828;
+}
+
+.room h3 {
+    margin-top: 0;
 }
 
 .form-grid {
@@ -131,6 +143,10 @@ button.green {
 
 button.red {
     background: #c62828;
+}
+
+button.gray {
+    background: #666;
 }
 
 .message {
@@ -195,7 +211,77 @@ th {
     color: #777;
 }
 
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.55);
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.modal-content {
+    background: white;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 25px;
+    border-radius: 14px;
+}
+
+.close {
+    float: right;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.receipt {
+    border: 2px solid #222;
+    padding: 20px;
+    background: white;
+}
+
+.receipt h2,
+.receipt h3 {
+    text-align: center;
+}
+
+.receipt-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.report-box {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.report-card {
+    background: #f4f6f8;
+    padding: 18px;
+    border-radius: 10px;
+}
+
+.report-card h3 {
+    margin: 0 0 8px;
+    font-size: 14px;
+    color: #666;
+}
+
+.report-card p {
+    margin: 0;
+    font-size: 22px;
+    font-weight: bold;
+}
+
 @media (max-width: 700px) {
+
     .stats {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -208,23 +294,34 @@ th {
         grid-template-columns: 1fr;
     }
 
+    .report-box {
+        grid-template-columns: 1fr;
+    }
+
     table {
         display: block;
         overflow-x: auto;
         font-size: 12px;
     }
+
 }
+
 </style>
 </head>
 
 <body>
 
 <header>
-    <h1>🏠 Hostel Management</h1>
-    <p>Monthly Rent & Tenant Dashboard</p>
+
+<h1>🏠 Hostel Management</h1>
+
+<p>Tenant • Rent • Payments • Reports</p>
+
 </header>
 
+
 <div class="container">
+
 
 <!-- DASHBOARD -->
 
@@ -246,7 +343,7 @@ th {
 </div>
 
 <div class="stat">
-<h3>Outstanding This Month</h3>
+<h3>Outstanding</h3>
 <p id="outstanding">GH₵0</p>
 </div>
 
@@ -263,7 +360,7 @@ th {
 
 <select id="monthSelector"></select>
 
-<p style="margin-top:12px;">
+<p>
 Rent is due on the <strong>1st of every month.</strong>
 </p>
 
@@ -275,6 +372,8 @@ Rent is due on the <strong>1st of every month.</strong>
 <div class="section">
 
 <h2>🏠 Rooms</h2>
+
+<p>Tap a room to view tenant details.</p>
 
 <div id="rooms" class="rooms"></div>
 
@@ -290,39 +389,71 @@ Rent is due on the <strong>1st of every month.</strong>
 <div class="form-grid">
 
 <div>
+
 <label>Tenant Name</label>
-<input id="tenantName" type="text" placeholder="Enter tenant name">
+
+<input
+id="tenantName"
+type="text"
+placeholder="Enter tenant name">
+
 </div>
 
+
 <div>
+
 <label>Phone Number</label>
-<input id="tenantPhone" type="tel" placeholder="Enter phone number">
+
+<input
+id="tenantPhone"
+type="tel"
+placeholder="Enter phone number">
+
 </div>
 
+
 <div>
+
 <label>Room</label>
+
 <select id="tenantRoom">
-<option value="">Select a room</option>
+
+<option value="">
+Select a room
+</option>
+
 </select>
+
 </div>
+
 
 <div>
+
 <label>Monthly Rent (GH₵)</label>
-<input id="tenantRent" type="number" placeholder="Example: 1500">
+
+<input
+id="tenantRent"
+type="number"
+placeholder="Example: 1500">
+
 </div>
 
 </div>
+
 
 <button id="addTenantButton">
 Add Tenant
 </button>
 
-<div id="tenantMessage" class="message"></div>
+<div
+id="tenantMessage"
+class="message">
+</div>
 
 </div>
 
 
-<!-- MONTHLY RENT STATUS -->
+<!-- RENT STATUS -->
 
 <div class="section">
 
@@ -342,39 +473,59 @@ Add Tenant
 <div class="form-grid">
 
 <div>
+
 <label>Tenant</label>
 
 <select id="paymentTenant">
-<option value="">Select tenant</option>
+
+<option value="">
+Select tenant
+</option>
+
 </select>
+
 </div>
 
+
 <div>
+
 <label>Amount (GH₵)</label>
 
 <input
 id="paymentAmount"
 type="number"
 placeholder="Enter amount">
+
 </div>
 
+
 <div>
+
 <label>Payment Method</label>
 
 <select id="paymentMethod">
+
 <option>Cash</option>
 <option>Mobile Money</option>
 <option>Bank Transfer</option>
+
 </select>
+
 </div>
+
 
 <div>
+
 <label>Payment Date</label>
 
-<input id="paymentDate" type="date">
+<input
+id="paymentDate"
+type="date">
+
 </div>
 
 </div>
+
 
 <button
 id="recordPaymentButton"
@@ -384,7 +535,24 @@ Record Payment
 
 </button>
 
-<div id="paymentMessage" class="message"></div>
+<div
+id="paymentMessage"
+class="message">
+</div>
+
+</div>
+
+
+<!-- MONTHLY REPORT -->
+
+<div class="section">
+
+<h2>📊 Monthly Income Report</h2>
+
+<div
+id="monthlyReport"
+class="report-box">
+</div>
 
 </div>
 
@@ -399,6 +567,59 @@ Record Payment
 
 </div>
 
+
+</div>
+
+
+<!-- ROOM MODAL -->
+
+<div
+id="roomModal"
+class="modal">
+
+<div class="modal-content">
+
+<span
+class="close"
+onclick="closeRoomModal()">
+
+×
+</span>
+
+<div id="roomDetails"></div>
+
+</div>
+
+</div>
+
+
+<!-- RECEIPT MODAL -->
+
+<div
+id="receiptModal"
+class="modal">
+
+<div class="modal-content">
+
+<span
+class="close"
+onclick="closeReceiptModal()">
+
+×
+</span>
+
+<div id="receiptContent"></div>
+
+<button
+onclick="window.print()"
+class="green">
+
+🧾 Print Receipt
+
+</button>
+
+</div>
+
 </div>
 
 
@@ -410,30 +631,28 @@ let tenants = [];
 
 let payments = [];
 
-let selectedMonth = getCurrentMonth();
+let selectedMonth =
+getCurrentMonth();
 
 
 function getCurrentMonth() {
 
 const date = new Date();
 
-return date.getFullYear() + "-" +
-String(date.getMonth() + 1).padStart(2, "0");
+return date.getFullYear()
++ "-"
++ String(
+date.getMonth() + 1
+).padStart(2,"0");
 
 }
 
 
-function saveData() {
+function money(amount) {
 
-localStorage.setItem(
-"hostelMonthlyTenants",
-JSON.stringify(tenants)
-);
-
-localStorage.setItem(
-"hostelMonthlyPayments",
-JSON.stringify(payments)
-);
+return "GH₵"
++ Number(amount)
+.toLocaleString();
 
 }
 
@@ -443,24 +662,35 @@ function loadData() {
 tenants =
 JSON.parse(
 localStorage.getItem(
-"hostelMonthlyTenants"
+"hostelFullTenants"
 )
 ) || [];
 
 payments =
 JSON.parse(
 localStorage.getItem(
-"hostelMonthlyPayments"
+"hostelFullPayments"
 )
 ) || [];
 
 }
 
 
-function money(amount) {
+function saveData() {
 
-return "GH₵" +
-Number(amount).toLocaleString();
+localStorage.setItem(
+"hostelFullTenants",
+JSON.stringify(
+tenants
+)
+);
+
+localStorage.setItem(
+"hostelFullPayments",
+JSON.stringify(
+payments
+)
+);
 
 }
 
@@ -474,23 +704,29 @@ type
 const box =
 document.getElementById(id);
 
-box.textContent = text;
+box.textContent =
+text;
 
 box.className =
 "message " + type;
 
-box.style.display = "block";
+box.style.display =
+"block";
 
-setTimeout(() => {
+setTimeout(
+() => {
 
-box.style.display = "none";
+box.style.display =
+"none";
 
-}, 3000);
+},
+3000
+);
 
 }
 
 
-/* MONTH SELECTOR */
+/* MONTHS */
 
 function createMonths() {
 
@@ -499,7 +735,8 @@ document.getElementById(
 "monthSelector"
 );
 
-const now = new Date();
+const now =
+new Date();
 
 select.innerHTML = "";
 
@@ -517,18 +754,18 @@ now.getMonth() + i,
 );
 
 const value =
-date.getFullYear() +
-"-" +
-String(
+date.getFullYear()
++ "-"
++ String(
 date.getMonth() + 1
-).padStart(2, "0");
+).padStart(2,"0");
 
 const label =
 date.toLocaleString(
 "en-US",
 {
-month: "long",
-year: "numeric"
+month:"long",
+year:"numeric"
 }
 );
 
@@ -537,21 +774,30 @@ document.createElement(
 "option"
 );
 
-option.value = value;
+option.value =
+value;
 
-option.textContent = label;
+option.textContent =
+label;
 
 if (
-value === selectedMonth
+value ===
+selectedMonth
 ) {
-option.selected = true;
+
+option.selected =
+true;
+
 }
 
-select.appendChild(option);
+select.appendChild(
+option
+);
 
 }
 
-select.onchange = function() {
+select.onchange =
+function() {
 
 selectedMonth =
 this.value;
@@ -568,27 +814,25 @@ render();
 function addTenant() {
 
 const name =
-document
-.getElementById("tenantName")
-.value
-.trim();
+document.getElementById(
+"tenantName"
+).value.trim();
 
 const phone =
-document
-.getElementById("tenantPhone")
-.value
-.trim();
+document.getElementById(
+"tenantPhone"
+).value.trim();
 
 const room =
-document
-.getElementById("tenantRoom")
-.value;
+document.getElementById(
+"tenantRoom"
+).value;
 
 const rent =
 Number(
-document
-.getElementById("tenantRent")
-.value
+document.getElementById(
+"tenantRent"
+).value
 );
 
 
@@ -610,15 +854,13 @@ return;
 }
 
 
-const roomTaken =
+if (
 tenants.some(
-tenant =>
-Number(tenant.room) ===
+t =>
+Number(t.room) ===
 Number(room)
-);
-
-
-if (roomTaken) {
+)
+) {
 
 showMessage(
 "tenantMessage",
@@ -635,13 +877,13 @@ tenants.push({
 
 id: Date.now(),
 
-name: name,
+name:name,
 
-phone: phone,
+phone:phone,
 
-room: Number(room),
+room:Number(room),
 
-rent: rent,
+rent:rent,
 
 moveIn:
 new Date()
@@ -676,109 +918,67 @@ showMessage(
 }
 
 
-/* GET PAYMENTS FOR MONTH */
+/* PAYMENTS */
 
-function getPaymentsForTenantMonth(
+function getTenantPayments(
 tenantId,
 month
 ) {
 
 return payments.filter(
-payment =>
-
-Number(payment.tenantId) ===
+p =>
+Number(p.tenantId) ===
 Number(tenantId)
-
 &&
-
-payment.month === month
-
+p.month ===
+month
 );
 
 }
 
 
-function getPaidForTenantMonth(
+function getPaid(
 tenantId,
 month
 ) {
 
-return getPaymentsForTenantMonth(
+return getTenantPayments(
 tenantId,
 month
 )
 .reduce(
-(total, payment) =>
+(total,p) =>
 total +
-Number(payment.amount),
+Number(p.amount),
 0
 );
 
 }
 
 
-/* RENT STATUS */
-
-function getStatus(
-rent,
-paid
-) {
-
-if (paid >= rent) {
-
-return {
-text: "PAID",
-className: "paid"
-};
-
-}
-
-if (paid > 0) {
-
-return {
-text: "PARTIAL",
-className: "partial"
-};
-
-}
-
-return {
-text: "UNPAID",
-className: "unpaid"
-};
-
-}
-
-
-/* RECORD PAYMENT */
-
 function recordPayment() {
 
 const tenantId =
 Number(
-document
-.getElementById(
+document.getElementById(
 "paymentTenant"
 ).value
 );
 
 const amount =
 Number(
-document
-.getElementById(
+document.getElementById(
 "paymentAmount"
 ).value
 );
 
 const method =
-document
-.getElementById(
+document.getElementById(
 "paymentMethod"
 ).value;
 
 const date =
-document
-.getElementById(
+document.getElementById(
 "paymentDate"
 ).value;
 
@@ -804,22 +1004,26 @@ const month =
 date.slice(0,7);
 
 
-payments.push({
+const payment = {
 
-id: Date.now(),
+id:Date.now(),
 
-tenantId: tenantId,
+tenantId:tenantId,
 
-amount: amount,
+amount:amount,
 
-method: method,
+method:method,
 
-date: date,
+date:date,
 
-month: month
+month:month
 
-});
+};
 
+
+payments.push(
+payment
+);
 
 saveData();
 
@@ -828,6 +1032,10 @@ document.getElementById(
 ).value = "";
 
 render();
+
+showReceipt(
+payment.id
+);
 
 showMessage(
 "paymentMessage",
@@ -850,15 +1058,16 @@ document.getElementById(
 container.innerHTML = "";
 
 for (
-let room = 1;
-room <= TOTAL_ROOMS;
+let room=1;
+room<=TOTAL_ROOMS;
 room++
 ) {
 
 const tenant =
 tenants.find(
 t =>
-Number(t.room) === room
+Number(t.room) ===
+room
 );
 
 const box =
@@ -867,12 +1076,23 @@ document.createElement(
 );
 
 box.className =
-"room " +
+"room "
++
 (
 tenant
 ? "occupied"
 : "vacant"
 );
+
+box.onclick =
+function() {
+
+showRoomDetails(
+room
+);
+
+};
+
 
 if (tenant) {
 
@@ -883,10 +1103,14 @@ box.innerHTML = `
 <p>🔴 Occupied</p>
 
 <p>
-<strong>${tenant.name}</strong>
+<strong>
+${tenant.name}
+</strong>
 </p>
 
-<p>${tenant.phone}</p>
+<p>
+${tenant.phone}
+</p>
 
 <p>
 Rent:
@@ -905,11 +1129,17 @@ box.innerHTML = `
 
 <p>🟢 Vacant</p>
 
+<p>
+Tap for details
+</p>
+
 `;
 
 }
 
-container.appendChild(box);
+container.appendChild(
+box
+);
 
 }
 
@@ -934,15 +1164,16 @@ Select a room
 `;
 
 for (
-let room = 1;
-room <= TOTAL_ROOMS;
+let room=1;
+room<=TOTAL_ROOMS;
 room++
 ) {
 
 const occupied =
 tenants.some(
 t =>
-Number(t.room) === room
+Number(t.room) ===
+room
 );
 
 if (!occupied) {
@@ -952,12 +1183,15 @@ document.createElement(
 "option"
 );
 
-option.value = room;
+option.value =
+room;
 
 option.textContent =
 "Room " + room;
 
-select.appendChild(option);
+select.appendChild(
+option
+);
 
 }
 
@@ -995,18 +1229,22 @@ option.value =
 tenant.id;
 
 option.textContent =
-tenant.name +
-" - Room " +
+tenant.name
++
+" - Room "
++
 tenant.room;
 
-select.appendChild(option);
+select.appendChild(
+option
+);
 
 });
 
 }
 
 
-/* RENT STATUS TABLE */
+/* RENT STATUS */
 
 function renderRentStatus() {
 
@@ -1052,24 +1290,52 @@ tenants.forEach(
 tenant => {
 
 const paid =
-getPaidForTenantMonth(
+getPaid(
 tenant.id,
 selectedMonth
 );
 
 const balance =
 Math.max(
-tenant.rent - paid,
+tenant.rent -
+paid,
 0
 );
 
-outstanding += balance;
+outstanding +=
+balance;
 
-const status =
-getStatus(
-tenant.rent,
-paid
-);
+
+let status =
+"UNPAID";
+
+let statusClass =
+"unpaid";
+
+
+if (
+paid >= tenant.rent
+) {
+
+status =
+"PAID";
+
+statusClass =
+"paid";
+
+}
+else if (
+paid > 0
+) {
+
+status =
+"PARTIAL";
+
+statusClass =
+"partial";
+
+}
+
 
 html += `
 
@@ -1098,9 +1364,9 @@ ${money(balance)}
 <td>
 
 <span
-class="status ${status.className}">
+class="status ${statusClass}">
 
-${status.text}
+${status}
 
 </span>
 
@@ -1113,15 +1379,90 @@ ${status.text}
 });
 
 
-html += "</table>";
+html +=
+"</table>";
 
-container.innerHTML = html;
+container.innerHTML =
+html;
 
 
 document.getElementById(
 "outstanding"
 ).textContent =
 money(outstanding);
+
+}
+
+
+/* MONTHLY REPORT */
+
+function renderMonthlyReport() {
+
+const container =
+document.getElementById(
+"monthlyReport"
+);
+
+let collected = 0;
+
+let expected = 0;
+
+tenants.forEach(
+tenant => {
+
+expected +=
+Number(tenant.rent);
+
+collected +=
+getPaid(
+tenant.id,
+selectedMonth
+);
+
+});
+
+
+const outstanding =
+Math.max(
+expected -
+collected,
+0
+);
+
+
+container.innerHTML = `
+
+<div class="report-card">
+
+<h3>Expected Rent</h3>
+
+<p>
+${money(expected)}
+</p>
+
+</div>
+
+<div class="report-card">
+
+<h3>Collected</h3>
+
+<p>
+${money(collected)}
+</p>
+
+</div>
+
+<div class="report-card">
+
+<h3>Outstanding</h3>
+
+<p>
+${money(outstanding)}
+</p>
+
+</div>
+
+`;
 
 }
 
@@ -1135,16 +1476,16 @@ document.getElementById(
 "paymentHistory"
 );
 
-const monthPayments =
+const list =
 payments.filter(
-payment =>
-payment.month ===
+p =>
+p.month ===
 selectedMonth
 );
 
 
 if (
-monthPayments.length === 0
+list.length === 0
 ) {
 
 container.innerHTML =
@@ -1166,13 +1507,14 @@ let html = `
 <th>Room</th>
 <th>Amount</th>
 <th>Method</th>
+<th>Receipt</th>
 
 </tr>
 
 `;
 
 
-monthPayments
+list
 .slice()
 .reverse()
 .forEach(
@@ -1185,23 +1527,44 @@ Number(t.id) ===
 Number(payment.tenantId)
 );
 
-if (!tenant) {
+if (!tenant)
 return;
-}
+
 
 html += `
 
 <tr>
 
-<td>${payment.date}</td>
+<td>
+${payment.date}
+</td>
 
-<td>${tenant.name}</td>
+<td>
+${tenant.name}
+</td>
 
-<td>Room ${tenant.room}</td>
+<td>
+Room ${tenant.room}
+</td>
 
-<td>${money(payment.amount)}</td>
+<td>
+${money(payment.amount)}
+</td>
 
-<td>${payment.method}</td>
+<td>
+${payment.method}
+</td>
+
+<td>
+
+<button
+onclick="showReceipt(${payment.id})">
+
+🧾 Receipt
+
+</button>
+
+</td>
 
 </tr>
 
@@ -1210,23 +1573,371 @@ html += `
 });
 
 
-html += "</table>";
+html +=
+"</table>";
 
-container.innerHTML = html;
+container.innerHTML =
+html;
 
 }
 
 
-/* DASHBOARD */
+/* ROOM DETAILS */
+
+function showRoomDetails(
+room
+) {
+
+const modal =
+document.getElementById(
+"roomModal"
+);
+
+const content =
+document.getElementById(
+"roomDetails"
+);
+
+const tenant =
+tenants.find(
+t =>
+Number(t.room) ===
+Number(room)
+);
+
+
+if (!tenant) {
+
+content.innerHTML = `
+
+<h2>🏠 Room ${room}</h2>
+
+<p>
+🟢 This room is currently vacant.
+</p>
+
+<button
+class="gray"
+onclick="closeRoomModal()">
+
+Close
+
+</button>
+
+`;
+
+}
+else {
+
+const paid =
+getPaid(
+tenant.id,
+selectedMonth
+);
+
+const balance =
+Math.max(
+tenant.rent -
+paid,
+0
+);
+
+
+let status =
+"UNPAID";
+
+
+if (
+paid >= tenant.rent
+)
+status =
+"PAID";
+
+else if (
+paid > 0
+)
+status =
+"PARTIAL";
+
+
+content.innerHTML = `
+
+<h2>
+🏠 Room ${room}
+</h2>
+
+<hr>
+
+<p>
+<strong>Tenant:</strong>
+${tenant.name}
+</p>
+
+<p>
+<strong>Phone:</strong>
+${tenant.phone}
+</p>
+
+<p>
+<strong>Monthly Rent:</strong>
+${money(tenant.rent)}
+</p>
+
+<p>
+<strong>Month:</strong>
+${selectedMonth}
+</p>
+
+<p>
+<strong>Paid:</strong>
+${money(paid)}
+</p>
+
+<p>
+<strong>Balance:</strong>
+${money(balance)}
+</p>
+
+<p>
+<strong>Status:</strong>
+${status}
+</p>
+
+<hr>
+
+<h3>
+📜 Tenant Payment History
+</h3>
+
+<div id="roomPaymentHistory"></div>
+
+<button
+class="gray"
+onclick="closeRoomModal()">
+
+Close
+
+</button>
+
+`;
+
+const history =
+document.getElementById(
+"roomPaymentHistory"
+);
+
+const tenantPayments =
+payments.filter(
+p =>
+Number(p.tenantId) ===
+Number(tenant.id)
+);
+
+
+if (
+tenantPayments.length === 0
+) {
+
+history.innerHTML =
+"<p>No payments recorded.</p>";
+
+}
+else {
+
+history.innerHTML =
+tenantPayments
+.slice()
+.reverse()
+.map(
+p => `
+
+<p>
+${p.date} —
+<strong>
+${money(p.amount)}
+</strong>
+—
+${p.method}
+</p>
+
+`
+)
+.join("");
+
+}
+
+}
+
+
+modal.style.display =
+"block";
+
+}
+
+
+function closeRoomModal() {
+
+document.getElementById(
+"roomModal"
+).style.display =
+"none";
+
+}
+
+
+/* RECEIPT */
+
+function showReceipt(
+paymentId
+) {
+
+const payment =
+payments.find(
+p =>
+Number(p.id) ===
+Number(paymentId)
+);
+
+if (!payment)
+return;
+
+
+const tenant =
+tenants.find(
+t =>
+Number(t.id) ===
+Number(payment.tenantId)
+);
+
+if (!tenant)
+return;
+
+
+const receipt =
+document.getElementById(
+"receiptContent"
+);
+
+
+receipt.innerHTML = `
+
+<div class="receipt">
+
+<h2>
+🏠 HOSTEL PAYMENT RECEIPT
+</h2>
+
+<h3>
+Payment Receipt
+</h3>
+
+<div class="receipt-row">
+
+<span>Receipt No.</span>
+
+<strong>
+${payment.id}
+</strong>
+
+</div>
+
+<div class="receipt-row">
+
+<span>Tenant</span>
+
+<strong>
+${tenant.name}
+</strong>
+
+</div>
+
+<div class="receipt-row">
+
+<span>Room</span>
+
+<strong>
+Room ${tenant.room}
+</strong>
+
+</div>
+
+<div class="receipt-row">
+
+<span>Payment Date</span>
+
+<strong>
+${payment.date}
+</strong>
+
+</div>
+
+<div class="receipt-row">
+
+<span>Rent Month</span>
+
+<strong>
+${payment.month}
+</strong>
+
+</div>
+
+<div class="receipt-row">
+
+<span>Payment Method</span>
+
+<strong>
+${payment.method}
+</strong>
+
+</div>
+
+<div class="receipt-row">
+
+<span>Amount Paid</span>
+
+<strong>
+${money(payment.amount)}
+</strong>
+
+</div>
+
+<br>
+
+<p style="text-align:center;">
+<strong>
+Thank you for your payment.
+</strong>
+</p>
+
+</div>
+
+`;
+
+
+document.getElementById(
+"receiptModal"
+).style.display =
+"block";
+
+}
+
+
+function closeReceiptModal() {
+
+document.getElementById(
+"receiptModal"
+).style.display =
+"none";
+
+}
+
+
+/* STATS */
 
 function renderStats() {
 
 const occupied =
 tenants.length;
-
-const vacant =
-TOTAL_ROOMS -
-occupied;
 
 document.getElementById(
 "occupiedRooms"
@@ -1236,7 +1947,8 @@ occupied;
 document.getElementById(
 "vacantRooms"
 ).textContent =
-vacant;
+TOTAL_ROOMS -
+occupied;
 
 }
 
@@ -1255,6 +1967,8 @@ renderStats();
 
 renderRentStatus();
 
+renderMonthlyReport();
+
 renderPaymentHistory();
 
 }
@@ -1262,23 +1976,15 @@ renderPaymentHistory();
 
 /* BUTTONS */
 
-document
-.getElementById(
+document.getElementById(
 "addTenantButton"
-)
-.addEventListener(
-"click",
-addTenant
-);
+).onclick =
+addTenant;
 
-document
-.getElementById(
+document.getElementById(
 "recordPaymentButton"
-)
-.addEventListener(
-"click",
-recordPayment
-);
+).onclick =
+recordPayment;
 
 
 /* DATE */
