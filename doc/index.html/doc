@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hostel Management</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f4f6f8;
+    color: #222;
+}
+
+header {
+    background: #182848;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 {
+    margin-bottom: 5px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.stat {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+.stat h3 {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.stat p {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.section {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+.section h2 {
+    margin-bottom: 15px;
+}
+
+.rooms {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.room {
+    padding: 18px;
+    border-radius: 10px;
+    border: 2px solid #ddd;
+}
+
+.room.vacant {
+    border-color: #2e7d32;
+    background: #f1f8f2;
+}
+
+.room.occupied {
+    border-color: #c62828;
+    background: #fff4f4;
+}
+
+.room h3 {
+    margin-bottom: 8px;
+}
+
+.room button {
+    margin-top: 10px;
+}
+
+button {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 7px;
+    cursor: pointer;
+    background: #182848;
+    color: white;
+}
+
+button:hover {
+    opacity: .9;
+}
+
+button.delete {
+    background: #c62828;
+}
+
+button.payment {
+    background: #2e7d32;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background: #f1f3f5;
+}
+
+input, select {
+    width: 100%;
+    padding: 11px;
+    margin-top: 5px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.balance {
+    font-weight: bold;
+}
+
+.balance.owing {
+    color: #c62828;
+}
+
+.balance.paid {
+    color: #2e7d32;
+}
+
+.empty {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+}
+
+@media(max-width: 700px) {
+
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .rooms {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    table {
+        font-size: 13px;
+    }
+
+    th, td {
+        padding: 8px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🏠 Hostel Management</h1>
+    <p>Tenant & Payment Dashboard</p>
+</header>
+
+<div class="container">
+
+    <!-- DASHBOARD -->
+    <div class="stats">
+
+        <div class="stat">
+            <h3>Total Rooms</h3>
+            <p id="totalRooms">13</p>
+        </div>
+
+        <div class="stat">
+            <h3>Occupied</h3>
+            <p id="occupiedRooms">0</p>
+        </div>
+
+        <div class="stat">
+            <h3>Vacant</h3>
+            <p id="vacantRooms">13</p>
+        </div>
+
+        <div class="stat">
+            <h3>Outstanding</h3>
+            <p id="outstanding">GH₵0</p>
+        </div>
+
+    </div>
+
+
+    <!-- ROOMS -->
+    <div class="section">
+
+        <h2>🏠 Rooms</h2>
+
+        <div id="rooms" class="rooms"></div>
+
+    </div>
+
+
+    <!-- ADD TENANT -->
+    <div class="section">
+
+        <h2>👤 Add Tenant</h2>
+
+        <div class="form-grid">
+
+            <div>
+                <label>Tenant Name</label>
+                <input
+                    id="tenantName"
+                    type="text"
+                    placeholder="Enter tenant name">
+            </div>
+
+            <div>
+                <label>Phone Number</label>
+                <input
+                    id="tenantPhone"
+                    type="text"
+                    placeholder="Enter phone number">
+            </div>
+
+            <div>
+                <label>Room</label>
+                <select id="tenantRoom"></select>
+            </div>
+
+            <div>
+                <label>Monthly Rent (GH₵)</label>
+                <input
+                    id="tenantRent"
+                    type="number"
+                    placeholder="Example: 1500">
+            </div>
+
+        </div>
+
+        <button onclick="addTenant()">
+            Add Tenant
+        </button>
+
+    </div>
+
+
+    <!-- TENANTS -->
+    <div class="section">
+
+        <h2>👥 Tenants</h2>
+
+        <div id="tenantTable"></div>
+
+    </div>
+
+
+    <!-- PAYMENTS -->
+    <div class="section">
+
+        <h2>💰 Record Payment</h2>
+
+        <div class="form-grid">
+
+            <div>
+                <label>Tenant</label>
+                <select id="paymentTenant"></select>
+            </div>
+
+            <div>
+                <label>Amount (GH₵)</label>
+                <input
+                    id="paymentAmount"
+                    type="number"
+                    placeholder="Enter amount">
+            </div>
+
+            <div>
+                <label>Payment Method</label>
+
+                <select id="paymentMethod">
+
+                    <option>Cash</option>
+
+                    <option>
+                        Mobile Money
+                    </option>
+
+                    <option>
+                        Bank Transfer
+                    </option>
+
+                </select>
+            </div>
+
+            <div>
+                <label>Date</label>
+
+                <input
+                    id="paymentDate"
+                    type="date">
+
+            </div>
+
+        </div>
+
+        <button
+            class="payment"
+            onclick="recordPayment()">
+
+            Record Payment
+
+        </button>
+
+    </div>
+
+
+    <!-- PAYMENT HISTORY -->
+    <div class="section">
+
+        <h2>📜 Payment History</h2>
+
+        <div id="paymentTable"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const TOTAL_ROOMS = 13;
+
+let tenants =
+    JSON.parse(
+        localStorage.getItem("hostelTenants")
+    ) || [];
+
+let payments =
+    JSON.parse(
+        localStorage.getItem("hostelPayments")
+    ) || [];
+
+
+// SAVE DATA
+function saveData() {
+
+    localStorage.setItem(
+        "hostelTenants",
+        JSON.stringify(tenants)
+    );
+
+    localStorage.setItem(
+        "hostelPayments",
+        JSON.stringify(payments)
+    );
+
+}
+
+
+// ADD TENANT
+function addTenant() {
+
+    const name =
+        document
+        .getElementById("tenantName")
+        .value
+        .trim();
+
+    const phone =
+        document
+        .getElementById("tenantPhone")
+        .value
+        .trim();
+
+    const room =
+        document
+        .getElementById("tenantRoom")
+        .value;
+
+    const rent =
+        Number(
+            document
+            .getElementById("tenantRent")
+            .value
+        );
+
+
+    if (!name || !phone || !room || !rent) {
+
+        alert(
+            "Please fill in all fields."
+        );
+
+        return;
+    }
+
+
+    const roomTaken =
+        tenants.some(
+            tenant =>
+                tenant.room == room
+        );
+
+
+    if (roomTaken) {
+
+        alert(
+            "This room is already occupied."
+        );
+
+        return;
+    }
+
+
+    const tenant = {
+
+        id: Date.now(),
+
+        name: name,
+
+        phone: phone,
+
+        room: room,
+
+        rent: rent,
+
+        dateAdded:
+            new Date()
+            .toLocaleDateString()
+
+    };
+
+
+    tenants.push(tenant);
+
+    saveData();
+
+
+    document
+        .getElementById("tenantName")
+        .value = "";
+
+    document
+        .getElementById("tenantPhone")
+        .value = "";
+
+    document
+        .getElementById("tenantRent")
+        .value = "";
+
+
+    render();
+
+
+    alert(
+        "Tenant added successfully!"
+    );
+
+}
+
+
+// DELETE TENANT
+function deleteTenant(id) {
+
+    if (
+        !confirm(
+            "Remove this tenant?"
+        )
+    ) {
+        return;
+    }
+
+
+    tenants =
+        tenants.filter(
+            tenant =>
+                tenant.id !== id
+        );
+
+
+    payments =
+        payments.filter(
+            payment =>
+                payment.tenantId !== id
+        );
+
+
+    saveData();
+
+    render();
+
+}
+
+
+// RECORD PAYMENT
+function recordPayment() {
+
+    const tenantId =
+        Number(
+            document
+            .getElementById(
+                "paymentTenant"
+            )
+            .value
+        );
+
+
+    const amount =
+        Number(
+            document
+            .getElementById(
+                "paymentAmount"
+            )
+            .value
+        );
+
+
+    const method =
+        document
+        .getElementById(
+            "paymentMethod"
+        )
+        .value;
+
+
+    const date =
+        document
+        .getElementById(
+            "paymentDate"
+        )
+        .value;
+
+
+    if (
+        !tenantId ||
+        !amount ||
+        !date
+    ) {
+
+        alert(
+            "Please complete all payment fields."
+        );
+
+        return;
+    }
+
+
+    const payment = {
+
+        id: Date.now(),
+
+        tenantId: tenantId,
+
+        amount: amount,
+
+        method: method,
+
+        date: date
+
+    };
+
+
+    payments.push(payment);
+
+    saveData();
+
+
+    document
+        .getElementById(
+            "paymentAmount"
+        )
+        .value = "";
+
+
+    render();
+
+
+    alert(
+        "Payment recorded!"
+    );
+
+}
+
+
+// CALCULATE PAID
+function getTenantPaid(
+    tenantId
+) {
+
+    return payments
+
+        .filter(
+            payment =>
+                payment.tenantId ===
+                tenantId
+        )
+
+        .reduce(
+            (
+                total,
+                payment
+            ) =>
+                total +
+                Number(
+                    payment.amount
+                ),
+            0
+        );
+
+}
+
+
+// ROOM DISPLAY
+function renderRooms() {
+
+    const container =
+        document.getElementById(
+            "rooms"
+        );
+
+    container.innerHTML = "";
+
+
+    for (
+        let i = 1;
+        i <= TOTAL_ROOMS;
+        i++
+    ) {
+
+        const tenant =
+            tenants.find(
+                t => t.room == i
+            );
+
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+
+        div.className =
+            "room " +
+            (
+                tenant
+                ? "occupied"
+                : "vacant"
+            );
+
+
+        if (tenant) {
+
+            div.innerHTML = `
+
+                <h3>
+                    Room ${i}
+                </h3>
+
+                <p>
+                    🔴 Occupied
+                </p>
+
+                <p>
+                    <strong>
+                        ${tenant.name}
+                    </strong>
+                </p>
+
+                <p>
+                    ${tenant.phone}
+                </p>
+
+            `;
+
+        } else {
+
+            div.innerHTML = `
+
+                <h3>
+                    Room ${i}
+                </h3>
+
+                <p>
+                    🟢 Vacant
+                </p>
+
+            `;
+
+        }
+
+
+        container.appendChild(
+            div
+        );
+
+    }
+
+}
+
+
+// ROOM SELECT
+function renderRoomSelect() {
+
+    const select =
+        document.getElementById(
+            "tenantRoom"
+        );
+
+
+    select.innerHTML =
+        '<option value="">Select room</option>';
+
+
+    for (
+        let i = 1;
+        i <= TOTAL_ROOMS;
+        i++
+    ) {
+
+        const occupied =
+            tenants.some(
+                t => t.room == i
+            );
+
+
+        if (!occupied) {
+
+            select.innerHTML += `
+
+                <option value="${i}">
+                    Room ${i}
+                </option>
+
+            `;
+
+        }
+
+    }
+
+}
+
+
+// TENANT SELECT
+function renderTenantSelect() {
+
+    const select =
+        document.getElementById(
+            "paymentTenant"
+        );
+
+
+    select.innerHTML =
+        '<option value="">Select tenant</option>';
+
+
+    tenants.forEach(
+        tenant => {
+
+            select.innerHTML += `
+
+                <option value="${tenant.id}">
+
+                    ${tenant.name}
+                    - Room ${tenant.room}
+
+                </option>
+
+            `;
+
+        }
+    );
+
+}
+
+
+// TENANT TABLE
+function renderTenants() {
+
+    const container =
+        document.getElementById(
+            "tenantTable"
+        );
+
+
+    if (
+        tenants.length === 0
+    ) {
+
+        container.innerHTML =
+            '<div class="empty">No tenants yet.</div>';
+
+        return;
+
+    }
+
+
+    let html = `
+
+        <table>
+
+            <tr>
+
+                <th>Name</th>
+
+                <th>Phone</th>
+
+                <th>Room</th>
+
+                <th>Rent</th>
+
+                <th>Paid</th>
+
+                <th>Balance</th>
+
+                <th>Action</th>
+
+            </tr>
+
+    `;
+
+
+    tenants.forEach(
+        tenant => {
+
+            const paid =
+                getTenantPaid(
+                    tenant.id
+                );
+
+
+            const balance =
+                Math.max(
+                    tenant.rent -
+                    paid,
+                    0
+                );
+
+
+            html += `
+
+                <tr>
+
+                    <td>
+                        ${tenant.name}
+                    </td>
+
+                    <td>
+                        ${tenant.phone}
+                    </td>
+
+                    <td>
+                        ${tenant.room}
+                    </td>
+
+                    <td>
+                        GH₵${tenant.rent.toLocaleString()}
+                    </td>
+
+                    <td>
+                        GH₵${paid.toLocaleString()}
+                    </td>
+
+                    <td
+                        class="balance ${
+                            balance > 0
+                            ? "owing"
+                            : "paid"
+                        }">
+
+                        GH₵${balance.toLocaleString()}
+
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="delete"
+                            onclick="
+                                deleteTenant(
+                                    ${tenant.id}
+                                )
+                            ">
+
+                            Remove
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+    );
+
+
+    html += "</table>";
+
+    container.innerHTML =
+        html;
+
+}
+
+
+// PAYMENT TABLE
+function renderPayments() {
+
+    const container =
+        document.getElementById(
+            "paymentTable"
+        );
+
+
+    if (
+        payments.length === 0
+    ) {
+
+        container.innerHTML =
+            '<div class="empty">No payments recorded yet.</div>';
+
+        return;
+
+    }
+
+
+    let html = `
+
+        <table>
+
+            <tr>
+
+                <th>Date</th>
+
+                <th>Tenant</th>
+
+                <th>Room</th>
+
+                <th>Amount</th>
+
+                <th>Method</th>
+
+            </tr>
+
+    `;
+
+
+    payments
+        .slice()
+        .reverse()
+        .forEach(
+            payment => {
+
+                const tenant =
+                    tenants.find(
+                        t =>
+                            t.id ===
+                            payment.tenantId
+                    );
+
+
+                if (!tenant) {
+                    return;
+                }
+
+
+                html += `
+
+                    <tr>
+
+                        <td>
+                            ${payment.date}
+                        </td>
+
+                        <td>
+                            ${tenant.name}
+                        </td>
+
+                        <td>
+                            ${tenant.room}
+                        </td>
+
+                        <td>
+                            GH₵${Number(
+                                payment.amount
+                            ).toLocaleString()}
+                        </td>
+
+                        <td>
+                            ${payment.method}
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        );
+
+
+    html += "</table>";
+
+    container.innerHTML =
+        html;
+
+}
+
+
+// DASHBOARD
+function renderStats() {
+
+    const occupied =
+        tenants.length;
+
+
+    const vacant =
+        TOTAL_ROOMS -
+        occupied;
+
+
+    let outstanding = 0;
+
+
+    tenants.forEach(
+        tenant => {
+
+            const paid =
+                getTenantPaid(
+                    tenant.id
+                );
+
+
+            const balance =
+                Math.max(
+                    tenant.rent -
+                    paid,
+                    0
+                );
+
+
+            outstanding +=
+                balance;
+
+        }
+    );
+
+
+    document.getElementById(
+        "occupiedRooms"
+    ).textContent =
+        occupied;
+
+
+    document.getElementById(
+        "vacantRooms"
+    ).textContent =
+        vacant;
+
+
+    document.getElementById(
+        "outstanding"
+    ).textContent =
+        "GH₵" +
+        outstanding.toLocaleString();
+
+}
+
+
+// TODAY'S DATE
+document.getElementById(
+    "paymentDate"
+).value =
+    new Date()
+    .toISOString()
+    .split("T")[0];
+
+
+// START DASHBOARD
+render();
+
+</script>
+
+</body>
+</html>
