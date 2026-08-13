@@ -1,2017 +1,603 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Hostel Management</title>
+  <title>Hostel Manager</title>
 
-<style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-* {
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-body {
-    margin: 0;
-    background: #f4f6f8;
-    color: #222;
-}
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #1f2937;
+    }
 
-header {
-    background: #182848;
-    color: white;
-    text-align: center;
-    padding: 25px 15px;
-}
+    header {
+      background: #111827;
+      color: white;
+      padding: 20px;
+    }
 
-header h1 {
-    margin: 0 0 6px;
-}
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
 
-.container {
-    max-width: 1200px;
-    margin: auto;
-    padding: 20px;
-}
+    header p {
+      margin: 6px 0 0;
+      color: #d1d5db;
+    }
 
-.stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.stat {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.08);
-}
-
-.stat h3 {
-    margin: 0 0 8px;
-    color: #666;
-    font-size: 14px;
-}
-
-.stat p {
-    margin: 0;
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.section {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.08);
-}
-
-.section h2 {
-    margin-top: 0;
-}
-
-.rooms {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-}
-
-.room {
-    padding: 17px;
-    border-radius: 10px;
-    border: 2px solid #ddd;
-    cursor: pointer;
-    transition: .2s;
-}
-
-.room:hover {
-    transform: translateY(-2px);
-}
-
-.room.vacant {
-    background: #f1f8f2;
-    border-color: #2e7d32;
-}
-
-.room.occupied {
-    background: #fff4f4;
-    border-color: #c62828;
-}
-
-.room h3 {
-    margin-top: 0;
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-}
-
-label {
-    font-weight: bold;
-    font-size: 14px;
-}
-
-input,
-select {
-    width: 100%;
-    padding: 12px;
-    margin-top: 6px;
-    border: 1px solid #ccc;
-    border-radius: 7px;
-    background: white;
-}
-
-button {
-    border: none;
-    padding: 11px 17px;
-    border-radius: 7px;
-    background: #182848;
-    color: white;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-button.green {
-    background: #2e7d32;
-}
-
-button.red {
-    background: #c62828;
-}
-
-button.gray {
-    background: #666;
-}
-
-.message {
-    margin-top: 12px;
-    padding: 10px;
-    border-radius: 7px;
-    display: none;
-}
-
-.success {
-    background: #e8f5e9;
-    color: #2e7d32;
-}
-
-.error {
-    background: #ffebee;
-    color: #c62828;
-}
-
-.status {
-    display: inline-block;
-    padding: 5px 9px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.paid {
-    background: #dff3e2;
-    color: #2e7d32;
-}
-
-.partial {
-    background: #fff1cc;
-    color: #996c00;
-}
-
-.unpaid {
-    background: #ffdede;
-    color: #c62828;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th,
-td {
-    padding: 11px;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
-}
-
-th {
-    background: #f1f3f5;
-}
-
-.empty {
-    text-align: center;
-    padding: 20px;
-    color: #777;
-}
-
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 10;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,.55);
-    padding: 20px;
-    overflow-y: auto;
-}
-
-.modal-content {
-    background: white;
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 25px;
-    border-radius: 14px;
-}
-
-.close {
-    float: right;
-    font-size: 28px;
-    cursor: pointer;
-}
-
-.receipt {
-    border: 2px solid #222;
-    padding: 20px;
-    background: white;
-}
-
-.receipt h2,
-.receipt h3 {
-    text-align: center;
-}
-
-.receipt-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid #ddd;
-}
-
-.report-box {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-}
-
-.report-card {
-    background: #f4f6f8;
-    padding: 18px;
-    border-radius: 10px;
-}
-
-.report-card h3 {
-    margin: 0 0 8px;
-    font-size: 14px;
-    color: #666;
-}
-
-.report-card p {
-    margin: 0;
-    font-size: 22px;
-    font-weight: bold;
-}
-
-@media (max-width: 700px) {
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px;
+    }
 
     .stats {
-        grid-template-columns: repeat(2, 1fr);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 28px;
+      margin-top: 5px;
     }
 
     .rooms {
-        grid-template-columns: repeat(2, 1fr);
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
     }
 
-    .form-grid {
+    .room {
+      background: white;
+      border-radius: 16px;
+      padding: 18px;
+      border-left: 6px solid #9ca3af;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .room.occupied {
+      border-left-color: #22c55e;
+    }
+
+    .room.vacant {
+      border-left-color: #3b82f6;
+    }
+
+    .room-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .room-title h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .status {
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .status.occupied {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status.vacant {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .tenant-info {
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    button {
+      border: none;
+      border-radius: 9px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .add-btn {
+      background: #111827;
+      color: white;
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    .delete-btn {
+      background: #fee2e2;
+      color: #b91c1c;
+      margin-top: 10px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      padding: 20px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-box {
+      background: white;
+      width: 100%;
+      max-width: 430px;
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    .modal-box h2 {
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      font-size: 16px;
+    }
+
+    .form-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .save-btn {
+      background: #16a34a;
+      color: white;
+      flex: 1;
+    }
+
+    .cancel-btn {
+      background: #e5e7eb;
+      flex: 1;
+    }
+
+    .message {
+      text-align: center;
+      padding: 15px;
+      color: #6b7280;
+    }
+
+    @media (max-width: 600px) {
+      .stats {
         grid-template-columns: 1fr;
-    }
+      }
 
-    .report-box {
+      .rooms {
         grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 14px;
+      }
     }
-
-    table {
-        display: block;
-        overflow-x: auto;
-        font-size: 12px;
-    }
-
-}
-
-</style>
+  </style>
 </head>
 
 <body>
 
 <header>
-
-<h1>🏠 Hostel Management</h1>
-
-<p>Tenant • Rent • Payments • Reports</p>
-
+  <h1>🏠 Hostel Manager</h1>
+  <p>16-Room Hostel Dashboard</p>
 </header>
-
 
 <div class="container">
 
+  <div class="stats">
+    <div class="stat">
+      Total Rooms
+      <strong>16</strong>
+    </div>
 
-<!-- DASHBOARD -->
+    <div class="stat">
+      Occupied
+      <strong id="occupiedCount">0</strong>
+    </div>
 
-<div class="stats">
+    <div class="stat">
+      Vacant
+      <strong id="vacantCount">16</strong>
+    </div>
+  </div>
 
-<div class="stat">
-<h3>Total Rooms</h3>
-<p>16</p>
-</div>
-
-<div class="stat">
-<h3>Occupied</h3>
-<p id="occupiedRooms">0</p>
-</div>
-
-<div class="stat">
-<h3>Vacant</h3>
-<p id="vacantRooms">16</p>
-</div>
-
-<div class="stat">
-<h3>Outstanding</h3>
-<p id="outstanding">GH₵0</p>
-</div>
+  <div id="rooms" class="rooms">
+    <div class="message">Loading rooms...</div>
+  </div>
 
 </div>
 
+<div id="modal" class="modal">
+  <div class="modal-box">
 
-<!-- MONTH -->
+    <h2 id="modalTitle">Add Tenant</h2>
 
-<div class="section">
+    <input type="hidden" id="tenantId">
+    <input type="hidden" id="selectedRoom">
 
-<h2>📅 Monthly Rent</h2>
+    <label>Tenant Name</label>
+    <input id="tenantName" type="text" placeholder="Enter tenant name">
 
-<label>Select Month</label>
+    <label>Phone Number</label>
+    <input id="tenantPhone" type="tel" placeholder="Enter phone number">
 
-<select id="monthSelector"></select>
+    <label>Rent</label>
+    <input id="tenantRent" type="number" placeholder="Enter rent amount">
 
-<p>
-Rent is due on the <strong>1st of every month.</strong>
-</p>
+    <label>Move-in Date</label>
+    <input id="tenantMoveIn" type="date">
 
+    <div class="form-buttons">
+      <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+      <button class="save-btn" onclick="saveTenant()">Save Tenant</button>
+    </div>
+
+  </div>
 </div>
-
-
-<!-- ROOMS -->
-
-<div class="section">
-
-<h2>🏠 Rooms</h2>
-
-<p>Tap a room to view tenant details.</p>
-
-<div id="rooms" class="rooms"></div>
-
-</div>
-
-
-<!-- ADD TENANT -->
-
-<div class="section">
-
-<h2>👤 Add Tenant</h2>
-
-<div class="form-grid">
-
-<div>
-
-<label>Tenant Name</label>
-
-<input
-id="tenantName"
-type="text"
-placeholder="Enter tenant name">
-
-</div>
-
-
-<div>
-
-<label>Phone Number</label>
-
-<input
-id="tenantPhone"
-type="tel"
-placeholder="Enter phone number">
-
-</div>
-
-
-<div>
-
-<label>Room</label>
-
-<select id="tenantRoom">
-
-<option value="">
-Select a room
-</option>
-
-</select>
-
-</div>
-
-
-<div>
-
-<label>Monthly Rent (GH₵)</label>
-
-<input
-id="tenantRent"
-type="number"
-placeholder="Example: 1500">
-
-</div>
-
-</div>
-
-
-<button id="addTenantButton">
-Add Tenant
-</button>
-
-<div
-id="tenantMessage"
-class="message">
-</div>
-
-</div>
-
-
-<!-- RENT STATUS -->
-
-<div class="section">
-
-<h2>💰 Rent Status</h2>
-
-<div id="rentStatus"></div>
-
-</div>
-
-
-<!-- PAYMENT -->
-
-<div class="section">
-
-<h2>💵 Record Payment</h2>
-
-<div class="form-grid">
-
-<div>
-
-<label>Tenant</label>
-
-<select id="paymentTenant">
-
-<option value="">
-Select tenant
-</option>
-
-</select>
-
-</div>
-
-
-<div>
-
-<label>Amount (GH₵)</label>
-
-<input
-id="paymentAmount"
-type="number"
-placeholder="Enter amount">
-
-</div>
-
-
-<div>
-
-<label>Payment Method</label>
-
-<select id="paymentMethod">
-
-<option>Cash</option>
-<option>Mobile Money</option>
-<option>Bank Transfer</option>
-
-</select>
-
-</div>
-
-
-<div>
-
-<label>Payment Date</label>
-
-<input
-id="paymentDate"
-type="date">
-
-</div>
-
-</div>
-
-
-<button
-id="recordPaymentButton"
-class="green">
-
-Record Payment
-
-</button>
-
-<div
-id="paymentMessage"
-class="message">
-</div>
-
-</div>
-
-
-<!-- MONTHLY REPORT -->
-
-<div class="section">
-
-<h2>📊 Monthly Income Report</h2>
-
-<div
-id="monthlyReport"
-class="report-box">
-</div>
-
-</div>
-
-
-<!-- PAYMENT HISTORY -->
-
-<div class="section">
-
-<h2>📜 Payment History</h2>
-
-<div id="paymentHistory"></div>
-
-</div>
-
-
-</div>
-
-
-<!-- ROOM MODAL -->
-
-<div
-id="roomModal"
-class="modal">
-
-<div class="modal-content">
-
-<span
-class="close"
-onclick="closeRoomModal()">
-
-×
-</span>
-
-<div id="roomDetails"></div>
-
-</div>
-
-</div>
-
-
-<!-- RECEIPT MODAL -->
-
-<div
-id="receiptModal"
-class="modal">
-
-<div class="modal-content">
-
-<span
-class="close"
-onclick="closeReceiptModal()">
-
-×
-</span>
-
-<div id="receiptContent"></div>
-
-<button
-onclick="window.print()"
-class="green">
-
-🧾 Print Receipt
-
-</button>
-
-</div>
-
-</div>
-
 
 <script>
 
-const TOTAL_ROOMS = 16;
+  /* =====================================================
+     SUPABASE CONNECTION
+     ===================================================== */
 
-let tenants = [];
-
-let payments = [];
-
-let selectedMonth =
-getCurrentMonth();
-
-
-function getCurrentMonth() {
-
-const date = new Date();
-
-return date.getFullYear()
-+ "-"
-+ String(
-date.getMonth() + 1
-).padStart(2,"0");
-
-}
-
-
-function money(amount) {
-
-return "GH₵"
-+ Number(amount)
-.toLocaleString();
-
-}
-
-
-function loadData() {
-
-tenants =
-JSON.parse(
-localStorage.getItem(
-"hostelFullTenants"
-)
-) || [];
-
-payments =
-JSON.parse(
-localStorage.getItem(
-"hostelFullPayments"
-)
-) || [];
-
-}
-
-
-function saveData() {
-
-localStorage.setItem(
-"hostelFullTenants",
-JSON.stringify(
-tenants
-)
-);
-
-localStorage.setItem(
-"hostelFullPayments",
-JSON.stringify(
-payments
-)
-);
-
-}
-
-
-function showMessage(
-id,
-text,
-type
-) {
-
-const box =
-document.getElementById(id);
-
-box.textContent =
-text;
-
-box.className =
-"message " + type;
-
-box.style.display =
-"block";
-
-setTimeout(
-() => {
-
-box.style.display =
-"none";
-
-},
-3000
-);
-
-}
-
-
-/* MONTHS */
-
-function createMonths() {
-
-const select =
-document.getElementById(
-"monthSelector"
-);
-
-const now =
-new Date();
-
-select.innerHTML = "";
-
-for (
-let i = -12;
-i <= 12;
-i++
-) {
-
-const date =
-new Date(
-now.getFullYear(),
-now.getMonth() + i,
-1
-);
-
-const value =
-date.getFullYear()
-+ "-"
-+ String(
-date.getMonth() + 1
-).padStart(2,"0");
-
-const label =
-date.toLocaleString(
-"en-US",
-{
-month:"long",
-year:"numeric"
-}
-);
-
-const option =
-document.createElement(
-"option"
-);
-
-option.value =
-value;
-
-option.textContent =
-label;
-
-if (
-value ===
-selectedMonth
-) {
-
-option.selected =
-true;
-
-}
-
-select.appendChild(
-option
-);
-
-}
-
-select.onchange =
-function() {
-
-selectedMonth =
-this.value;
-
-render();
-
-};
-
-}
-
-
-/* ADD TENANT */
-
-function addTenant() {
-
-const name =
-document.getElementById(
-"tenantName"
-).value.trim();
-
-const phone =
-document.getElementById(
-"tenantPhone"
-).value.trim();
-
-const room =
-document.getElementById(
-"tenantRoom"
-).value;
-
-const rent =
-Number(
-document.getElementById(
-"tenantRent"
-).value
-);
-
-
-if (
-!name ||
-!phone ||
-!room ||
-!rent
-) {
-
-showMessage(
-"tenantMessage",
-"Please fill in all fields.",
-"error"
-);
-
-return;
-
-}
-
-
-if (
-tenants.some(
-t =>
-Number(t.room) ===
-Number(room)
-)
-) {
-
-showMessage(
-"tenantMessage",
-"This room is already occupied.",
-"error"
-);
-
-return;
-
-}
-
-
-tenants.push({
-
-id: Date.now(),
-
-name:name,
-
-phone:phone,
-
-room:Number(room),
-
-rent:rent,
-
-moveIn:
-new Date()
-.toISOString()
-.slice(0,10)
-
-});
-
-
-saveData();
-
-document.getElementById(
-"tenantName"
-).value = "";
-
-document.getElementById(
-"tenantPhone"
-).value = "";
-
-document.getElementById(
-"tenantRent"
-).value = "";
-
-render();
-
-showMessage(
-"tenantMessage",
-"Tenant added successfully!",
-"success"
-);
-
-}
-
-
-/* PAYMENTS */
-
-function getTenantPayments(
-tenantId,
-month
-) {
-
-return payments.filter(
-p =>
-Number(p.tenantId) ===
-Number(tenantId)
-&&
-p.month ===
-month
-);
-
-}
-
-
-function getPaid(
-tenantId,
-month
-) {
-
-return getTenantPayments(
-tenantId,
-month
-)
-.reduce(
-(total,p) =>
-total +
-Number(p.amount),
-0
-);
-
-}
-
-
-function recordPayment() {
-
-const tenantId =
-Number(
-document.getElementById(
-"paymentTenant"
-).value
-);
-
-const amount =
-Number(
-document.getElementById(
-"paymentAmount"
-).value
-);
-
-const method =
-document.getElementById(
-"paymentMethod"
-).value;
-
-const date =
-document.getElementById(
-"paymentDate"
-).value;
-
-
-if (
-!tenantId ||
-!amount ||
-!date
-) {
-
-showMessage(
-"paymentMessage",
-"Please complete all payment fields.",
-"error"
-);
-
-return;
-
-}
-
-
-const month =
-date.slice(0,7);
-
-
-const payment = {
-
-id:Date.now(),
-
-tenantId:tenantId,
-
-amount:amount,
-
-method:method,
-
-date:date,
-
-month:month
-
-};
-
-
-payments.push(
-payment
-);
-
-saveData();
-
-document.getElementById(
-"paymentAmount"
-).value = "";
-
-render();
-
-showReceipt(
-payment.id
-);
-
-showMessage(
-"paymentMessage",
-"Payment recorded successfully!",
-"success"
-);
-
-}
-
-
-/* ROOMS */
-
-function renderRooms() {
-
-const container =
-document.getElementById(
-"rooms"
-);
-
-container.innerHTML = "";
-
-for (
-let room=1;
-room<=TOTAL_ROOMS;
-room++
-) {
-
-const tenant =
-tenants.find(
-t =>
-Number(t.room) ===
-room
-);
-
-const box =
-document.createElement(
-"div"
-);
-
-box.className =
-"room "
-+
-(
-tenant
-? "occupied"
-: "vacant"
-);
-
-box.onclick =
-function() {
-
-showRoomDetails(
-room
-);
-
-};
-
-
-if (tenant) {
-
-box.innerHTML = `
-
-<h3>Room ${room}</h3>
-
-<p>🔴 Occupied</p>
-
-<p>
-<strong>
-${tenant.name}
-</strong>
-</p>
-
-<p>
-${tenant.phone}
-</p>
-
-<p>
-Rent:
-<strong>
-${money(tenant.rent)}
-</strong>
-</p>
-
-`;
-
-} else {
-
-box.innerHTML = `
-
-<h3>Room ${room}</h3>
-
-<p>🟢 Vacant</p>
-
-<p>
-Tap for details
-</p>
-
-`;
-
-}
-
-container.appendChild(
-box
-);
-
-}
-
-}
-
-
-/* ROOM SELECT */
-
-function renderRoomSelect() {
-
-const select =
-document.getElementById(
-"tenantRoom"
-);
-
-select.innerHTML = `
-
-<option value="">
-Select a room
-</option>
-
-`;
-
-for (
-let room=1;
-room<=TOTAL_ROOMS;
-room++
-) {
-
-const occupied =
-tenants.some(
-t =>
-Number(t.room) ===
-room
-);
-
-if (!occupied) {
-
-const option =
-document.createElement(
-"option"
-);
-
-option.value =
-room;
-
-option.textContent =
-"Room " + room;
-
-select.appendChild(
-option
-);
-
-}
-
-}
-
-}
-
-
-/* TENANT SELECT */
-
-function renderTenantSelect() {
-
-const select =
-document.getElementById(
-"paymentTenant"
-);
-
-select.innerHTML = `
-
-<option value="">
-Select tenant
-</option>
-
-`;
-
-tenants.forEach(
-tenant => {
-
-const option =
-document.createElement(
-"option"
-);
-
-option.value =
-tenant.id;
-
-option.textContent =
-tenant.name
-+
-" - Room "
-+
-tenant.room;
-
-select.appendChild(
-option
-);
-
-});
-
-}
-
-
-/* RENT STATUS */
-
-function renderRentStatus() {
-
-const container =
-document.getElementById(
-"rentStatus"
-);
-
-if (
-tenants.length === 0
-) {
-
-container.innerHTML =
-'<div class="empty">No tenants yet.</div>';
-
-return;
-
-}
-
-
-let html = `
-
-<table>
-
-<tr>
-
-<th>Tenant</th>
-<th>Room</th>
-<th>Rent</th>
-<th>Paid</th>
-<th>Balance</th>
-<th>Status</th>
-
-</tr>
-
-`;
-
-
-let outstanding = 0;
-
-
-tenants.forEach(
-tenant => {
-
-const paid =
-getPaid(
-tenant.id,
-selectedMonth
-);
-
-const balance =
-Math.max(
-tenant.rent -
-paid,
-0
-);
-
-outstanding +=
-balance;
-
-
-let status =
-"UNPAID";
-
-let statusClass =
-"unpaid";
-
-
-if (
-paid >= tenant.rent
-) {
-
-status =
-"PAID";
-
-statusClass =
-"paid";
-
-}
-else if (
-paid > 0
-) {
-
-status =
-"PARTIAL";
-
-statusClass =
-"partial";
-
-}
-
-
-html += `
-
-<tr>
-
-<td>
-${tenant.name}
-</td>
-
-<td>
-Room ${tenant.room}
-</td>
-
-<td>
-${money(tenant.rent)}
-</td>
-
-<td>
-${money(paid)}
-</td>
-
-<td>
-${money(balance)}
-</td>
-
-<td>
-
-<span
-class="status ${statusClass}">
-
-${status}
-
-</span>
-
-</td>
-
-</tr>
-
-`;
-
-});
-
-
-html +=
-"</table>";
-
-container.innerHTML =
-html;
-
-
-document.getElementById(
-"outstanding"
-).textContent =
-money(outstanding);
-
-}
-
-
-/* MONTHLY REPORT */
-
-function renderMonthlyReport() {
-
-const container =
-document.getElementById(
-"monthlyReport"
-);
-
-let collected = 0;
-
-let expected = 0;
-
-tenants.forEach(
-tenant => {
-
-expected +=
-Number(tenant.rent);
-
-collected +=
-getPaid(
-tenant.id,
-selectedMonth
-);
-
-});
-
-
-const outstanding =
-Math.max(
-expected -
-collected,
-0
-);
-
-
-container.innerHTML = `
-
-<div class="report-card">
-
-<h3>Expected Rent</h3>
-
-<p>
-${money(expected)}
-</p>
-
-</div>
-
-<div class="report-card">
-
-<h3>Collected</h3>
-
-<p>
-${money(collected)}
-</p>
-
-</div>
-
-<div class="report-card">
-
-<h3>Outstanding</h3>
-
-<p>
-${money(outstanding)}
-</p>
-
-</div>
-
-`;
-
-}
-
-
-/* PAYMENT HISTORY */
-
-function renderPaymentHistory() {
-
-const container =
-document.getElementById(
-"paymentHistory"
-);
-
-const list =
-payments.filter(
-p =>
-p.month ===
-selectedMonth
-);
-
-
-if (
-list.length === 0
-) {
-
-container.innerHTML =
-'<div class="empty">No payments for this month.</div>';
-
-return;
-
-}
-
-
-let html = `
-
-<table>
-
-<tr>
-
-<th>Date</th>
-<th>Tenant</th>
-<th>Room</th>
-<th>Amount</th>
-<th>Method</th>
-<th>Receipt</th>
-
-</tr>
-
-`;
-
-
-list
-.slice()
-.reverse()
-.forEach(
-payment => {
-
-const tenant =
-tenants.find(
-t =>
-Number(t.id) ===
-Number(payment.tenantId)
-);
-
-if (!tenant)
-return;
-
-
-html += `
-
-<tr>
-
-<td>
-${payment.date}
-</td>
-
-<td>
-${tenant.name}
-</td>
-
-<td>
-Room ${tenant.room}
-</td>
-
-<td>
-${money(payment.amount)}
-</td>
-
-<td>
-${payment.method}
-</td>
-
-<td>
-
-<button
-onclick="showReceipt(${payment.id})">
-
-🧾 Receipt
-
-</button>
-
-</td>
-
-</tr>
-
-`;
-
-});
-
-
-html +=
-"</table>";
-
-container.innerHTML =
-html;
-
-}
-
-
-/* ROOM DETAILS */
-
-function showRoomDetails(
-room
-) {
-
-const modal =
-document.getElementById(
-"roomModal"
-);
-
-const content =
-document.getElementById(
-"roomDetails"
-);
-
-const tenant =
-tenants.find(
-t =>
-Number(t.room) ===
-Number(room)
-);
-
-
-if (!tenant) {
-
-content.innerHTML = `
-
-<h2>🏠 Room ${room}</h2>
-
-<p>
-🟢 This room is currently vacant.
-</p>
-
-<button
-class="gray"
-onclick="closeRoomModal()">
-
-Close
-
-</button>
-
-`;
-
-}
-else {
-
-const paid =
-getPaid(
-tenant.id,
-selectedMonth
-);
-
-const balance =
-Math.max(
-tenant.rent -
-paid,
-0
-);
-
-
-let status =
-"UNPAID";
-
-
-if (
-paid >= tenant.rent
-)
-status =
-"PAID";
-
-else if (
-paid > 0
-)
-status =
-"PARTIAL";
-
-
-content.innerHTML = `
-
-<h2>
-🏠 Room ${room}
-</h2>
-
-<hr>
-
-<p>
-<strong>Tenant:</strong>
-${tenant.name}
-</p>
-
-<p>
-<strong>Phone:</strong>
-${tenant.phone}
-</p>
-
-<p>
-<strong>Monthly Rent:</strong>
-${money(tenant.rent)}
-</p>
-
-<p>
-<strong>Month:</strong>
-${selectedMonth}
-</p>
-
-<p>
-<strong>Paid:</strong>
-${money(paid)}
-</p>
-
-<p>
-<strong>Balance:</strong>
-${money(balance)}
-</p>
-
-<p>
-<strong>Status:</strong>
-${status}
-</p>
-
-<hr>
-
-<h3>
-📜 Tenant Payment History
-</h3>
-
-<div id="roomPaymentHistory"></div>
-
-<button
-class="gray"
-onclick="closeRoomModal()">
-
-Close
-
-</button>
-
-`;
-
-const history =
-document.getElementById(
-"roomPaymentHistory"
-);
-
-const tenantPayments =
-payments.filter(
-p =>
-Number(p.tenantId) ===
-Number(tenant.id)
-);
-
-
-if (
-tenantPayments.length === 0
-) {
-
-history.innerHTML =
-"<p>No payments recorded.</p>";
-
-}
-else {
-
-history.innerHTML =
-tenantPayments
-.slice()
-.reverse()
-.map(
-p => `
-
-<p>
-${p.date} —
-<strong>
-${money(p.amount)}
-</strong>
-—
-${p.method}
-</p>
-
-`
-)
-.join("");
-
-}
-
-}
-
-
-modal.style.display =
-"block";
-
-}
-
-
-function closeRoomModal() {
-
-document.getElementById(
-"roomModal"
-).style.display =
-"none";
-
-}
-
-
-/* RECEIPT */
-
-function showReceipt(
-paymentId
-) {
-
-const payment =
-payments.find(
-p =>
-Number(p.id) ===
-Number(paymentId)
-);
-
-if (!payment)
-return;
-
-
-const tenant =
-tenants.find(
-t =>
-Number(t.id) ===
-Number(payment.tenantId)
-);
-
-if (!tenant)
-return;
-
-
-const receipt =
-document.getElementById(
-"receiptContent"
-);
-
-
-receipt.innerHTML = `
-
-<div class="receipt">
-
-<h2>
-🏠 HOSTEL PAYMENT RECEIPT
-</h2>
-
-<h3>
-Payment Receipt
-</h3>
-
-<div class="receipt-row">
-
-<span>Receipt No.</span>
-
-<strong>
-${payment.id}
-</strong>
-
-</div>
-
-<div class="receipt-row">
-
-<span>Tenant</span>
-
-<strong>
-${tenant.name}
-</strong>
-
-</div>
-
-<div class="receipt-row">
-
-<span>Room</span>
-
-<strong>
-Room ${tenant.room}
-</strong>
-
-</div>
-
-<div class="receipt-row">
-
-<span>Payment Date</span>
-
-<strong>
-${payment.date}
-</strong>
-
-</div>
-
-<div class="receipt-row">
-
-<span>Rent Month</span>
-
-<strong>
-${payment.month}
-</strong>
-
-</div>
-
-<div class="receipt-row">
-
-<span>Payment Method</span>
-
-<strong>
-${payment.method}
-</strong>
-
-</div>
-
-<div class="receipt-row">
-
-<span>Amount Paid</span>
-
-<strong>
-${money(payment.amount)}
-</strong>
-
-</div>
-
-<br>
-
-<p style="text-align:center;">
-<strong>
-Thank you for your payment.
-</strong>
-</p>
-
-</div>
-
-`;
-
-
-document.getElementById(
-"receiptModal"
-).style.display =
-"block";
-
-}
-
-
-function closeReceiptModal() {
-
-document.getElementById(
-"receiptModal"
-).style.display =
-"none";
-
-}
-
-
-/* STATS */
-
-function renderStats() {
-
-const occupied =
-tenants.length;
-
-document.getElementById(
-"occupiedRooms"
-).textContent =
-occupied;
-
-document.getElementById(
-"vacantRooms"
-).textContent =
-TOTAL_ROOMS -
-occupied;
-
-}
-
-
-/* RENDER */
-
-function render() {
-
-renderRooms();
-
-renderRoomSelect();
-
-renderTenantSelect();
-
-renderStats();
-
-renderRentStatus();
-
-renderMonthlyReport();
-
-renderPaymentHistory();
-
-}
-
-
-/* BUTTONS */
-
-document.getElementById(
-"addTenantButton"
-).onclick =
-addTenant;
-
-document.getElementById(
-"recordPaymentButton"
-).onclick =
-recordPayment;
-
-
-/* DATE */
-
-document.getElementById(
-"paymentDate"
-).value =
-new Date()
-.toISOString()
-.slice(0,10);
-
-
-/* START */
-
-loadData();
-
-createMonths();
-
-render();
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</script><script>
   const SUPABASE_URL = "https://qtxfvhbcquncmikuwkfa.supabase.co/rest/v1/";
-  const SUPABASE_ANON_KEY = "sb_publishable_uGhHxp5cMXEVRrJH0zTFyw_7rlRLR8p";
+  const SUPABASE_URL = "sb_publishable_uGhHxp5cMXEVRrJH0zTFyw_7rlRLR8p"
+
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+
+  /* =====================================================
+     HOSTEL SETTINGS
+     ===================================================== */
+
+  const TOTAL_ROOMS = 16;
+
+  let tenants = [];
+
+
+  /* =====================================================
+     LOAD TENANTS
+     ===================================================== */
+
+  async function loadTenants() {
+
+    const roomsContainer = document.getElementById("rooms");
+
+    roomsContainer.innerHTML =
+      '<div class="message">Loading rooms...</div>';
+
+    const { data, error } = await supabaseClient
+      .from("tenants")
+      .select("*")
+      .order("room", { ascending: true });
+
+    if (error) {
+
+      console.error(error);
+
+      roomsContainer.innerHTML = `
+        <div class="message">
+          Unable to load tenants.<br><br>
+          Please check your Supabase connection.
+        </div>
+      `;
+
+      return;
+    }
+
+    tenants = data || [];
+
+    displayRooms();
+  }
+
+
+  /* =====================================================
+     DISPLAY 16 ROOMS
+     ===================================================== */
+
+  function displayRooms() {
+
+    const roomsContainer = document.getElementById("rooms");
+
+    roomsContainer.innerHTML = "";
+
+    let occupied = 0;
+
+    for (let roomNumber = 1; roomNumber <= TOTAL_ROOMS; roomNumber++) {
+
+      const tenant = tenants.find(
+        t => String(t.room) === String(roomNumber)
+      );
+
+      const isOccupied = !!tenant;
+
+      if (isOccupied) {
+        occupied++;
+      }
+
+      const room = document.createElement("div");
+
+      room.className =
+        "room " + (isOccupied ? "occupied" : "vacant");
+
+
+      if (isOccupied) {
+
+        room.innerHTML = `
+
+          <div class="room-title">
+
+            <h3>🚪 Room ${roomNumber}</h3>
+
+            <span class="status occupied">
+              OCCUPIED
+            </span>
+
+          </div>
+
+          <div class="tenant-info">
+
+            <strong>Tenant:</strong>
+            ${escapeHTML(tenant.name || "Not provided")}
+            <br>
+
+            <strong>Phone:</strong>
+            ${escapeHTML(tenant.phone || "Not provided")}
+            <br>
+
+            <strong>Rent:</strong>
+            ${tenant.rent ? "GHS " + tenant.rent : "Not provided"}
+            <br>
+
+            <strong>Move-in:</strong>
+            ${tenant.move_in || "Not provided"}
+
+          </div>
+
+          <button
+            class="delete-btn"
+            onclick="deleteTenant('${tenant.id}')">
+            Remove Tenant
+          </button>
+
+        `;
+
+      } else {
+
+        room.innerHTML = `
+
+          <div class="room-title">
+
+            <h3>🚪 Room ${roomNumber}</h3>
+
+            <span class="status vacant">
+              VACANT
+            </span>
+
+          </div>
+
+          <div class="tenant-info">
+            No tenant assigned.
+          </div>
+
+          <button
+            class="add-btn"
+            onclick="openModal(${roomNumber})">
+            + Add Tenant
+          </button>
+
+        `;
+      }
+
+      roomsContainer.appendChild(room);
+    }
+
+    document.getElementById("occupiedCount").textContent = occupied;
+
+    document.getElementById("vacantCount").textContent =
+      TOTAL_ROOMS - occupied;
+  }
+
+
+  /* =====================================================
+     OPEN ADD TENANT WINDOW
+     ===================================================== */
+
+  function openModal(roomNumber) {
+
+    document.getElementById("selectedRoom").value = roomNumber;
+
+    document.getElementById("modalTitle").textContent =
+      "Add Tenant — Room " + roomNumber;
+
+    document.getElementById("tenantName").value = "";
+    document.getElementById("tenantPhone").value = "";
+    document.getElementById("tenantRent").value = "";
+    document.getElementById("tenantMoveIn").value = "";
+
+    document.getElementById("modal").classList.add("show");
+  }
+
+
+  /* =====================================================
+     CLOSE MODAL
+     ===================================================== */
+
+  function closeModal() {
+
+    document.getElementById("modal")
+      .classList.remove("show");
+  }
+
+
+  /* =====================================================
+     SAVE TENANT
+     ===================================================== */
+
+  async function saveTenant() {
+
+    const room =
+      document.getElementById("selectedRoom").value;
+
+    const name =
+      document.getElementById("tenantName").value.trim();
+
+    const phone =
+      document.getElementById("tenantPhone").value.trim();
+
+    const rent =
+      document.getElementById("tenantRent").value;
+
+    const moveIn =
+      document.getElementById("tenantMoveIn").value;
+
+
+    if (!name) {
+
+      alert("Please enter the tenant's name.");
+
+      return;
+    }
+
+
+    const { error } = await supabaseClient
+      .from("tenants")
+      .insert({
+
+        room: room,
+
+        rent: rent || null,
+
+        phone: phone || null,
+
+        move_in: moveIn || null
+
+      });
+
+
+    if (error) {
+
+      console.error(error);
+
+      alert(
+        "Could not save tenant. Check your Supabase table permissions."
+      );
+
+      return;
+    }
+
+
+    closeModal();
+
+    await loadTenants();
+  }
+
+
+  /* =====================================================
+     DELETE TENANT
+     ===================================================== */
+
+  async function deleteTenant(id) {
+
+    const confirmed =
+      confirm("Remove this tenant from the room?");
+
+    if (!confirmed) {
+      return;
+    }
+
+
+    const { error } = await supabaseClient
+      .from("tenants")
+      .delete()
+      .eq("id", id);
+
+
+    if (error) {
+
+      console.error(error);
+
+      alert("Could not remove tenant.");
+
+      return;
+    }
+
+
+    await loadTenants();
+  }
+
+
+  /* =====================================================
+     SECURITY / TEXT CLEANING
+     ===================================================== */
+
+  function escapeHTML(value) {
+
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+
+  /* =====================================================
+     START APPLICATION
+     ===================================================== */
+
+  loadTenants();
+
 </script>
-const supabase = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+
 </body>
 </html>
