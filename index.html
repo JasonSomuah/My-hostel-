@@ -2004,11 +2004,14 @@ loadData();
 createMonths();
 
 render();
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </script><script>
   const SUPABASE_URL = "https://qtxfvhbcquncmikuwkfa.supabase.co/rest/v1/";
   const SUPABASE_ANON_KEY = "sb_publishable_uGhHxp5cMXEVRrJH0zTFyw_7rlRLR8p";
 </script>
-
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
 </body>
 </html>
