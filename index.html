@@ -346,9 +346,9 @@
 
   function displayRooms() {
 
-    const roomsContainer = document.getElementById("rooms");
+    const roomContainer = document.getElementById("rooms");
 
-    roomsContainer.innerHTML = "";
+ roomContainer.appendChild(room);  
 
     let occupied = 0;
 
