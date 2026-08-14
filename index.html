@@ -687,7 +687,7 @@ async function login() {
   }
 
   message.textContent = "Logging in...";
-
+console.log("LOGIN FUNCTION STARTED");
   const { error } = await supabaseClient.auth.signInWithPassword({
     email: email,
     password: password
