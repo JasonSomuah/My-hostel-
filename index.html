@@ -12,7 +12,60 @@
     * {
       box-sizing: border-box;
     }
+#loginScreen {
+  position: fixed;
+  inset: 0;
+  background: #f4f6f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
 
+.loginBox {
+  background: white;
+  width: 90%;
+  max-width: 380px;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  text-align: center;
+}
+
+.loginBox h2 {
+  margin-bottom: 8px;
+}
+
+.loginBox p {
+  color: #6b7280;
+}
+
+.loginBox input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px;
+  margin-top: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.loginBox button {
+  width: 100%;
+  padding: 13px;
+  margin-top: 18px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#loginMessage {
+  margin-top: 12px;
+  color: #dc2626;
+}
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -221,7 +274,22 @@
 </head>
 
 <body>
+<body>
 
+<div id="loginScreen">
+  <div class="loginBox">
+    <h2>Hostel Manager</h2>
+    <p>Login to continue</p>
+
+    <input type="email" id="loginEmail" placeholder="Email" autocomplete="username">
+
+    <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+
+    <button onclick="login()">Login</button>
+
+    <p id="loginMessage"></p>
+  </div>
+</div>
 <header>
   <h1>🏠 Hostel Manager</h1>
   <p>16-Room Hostel Dashboard</p>
@@ -610,5 +678,28 @@
      ===================================================== */
 
   loadTenants();
+async function login() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  const message = document.getElementById("loginMessage");
 
+  message.textContent = "";
+
+  if (!email || !password) {
+    message.textContent = "Please enter your email and password.";
+    return;
+  }
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email: email,
+    password: password
+  });
+
+  if (error) {
+    message.textContent = "Incorrect email or password.";
+    return;
+  }
+
+  document.getElementById("loginScreen").style.display = "none";
+}
 </script>
