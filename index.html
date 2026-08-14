@@ -285,8 +285,10 @@
      SUPABASE CONNECTION
      ===================================================== */
 
-  const SUPABASE_URL = "https://qtxfvhbcquncmikuwkfa.supabase.co/rest/v1/";
-  const SUPABASE_URL = "sb_publishable_uGhHxp5cMXEVRrJH0zTFyw_7rlRLR8p"
+  const SUPABASE_URL = "https://qtxfvhbcquncmikuwkfa.supabase.co";
+
+  const SUPABASE_ANON_KEY =
+    "sb_publishable_uGhHxp5cMXEVRrJH0zTFyw_7rlRLR8p";
 
   const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
@@ -321,12 +323,12 @@
 
     if (error) {
 
-      console.error(error);
+      console.error("Supabase error:", error);
 
       roomsContainer.innerHTML = `
         <div class="message">
           Unable to load tenants.<br><br>
-          Please check your Supabase connection.
+          ${error.message}
         </div>
       `;
 
@@ -342,58 +344,115 @@
   /* =====================================================
      DISPLAY 16 ROOMS
      ===================================================== */
-function displayRooms() {
-  const roomsContainer = document.getElementById("rooms");
 
-  if (!roomsContainer) {
-    console.error("Rooms container not found");
-    return;
-  }
+  function displayRooms() {
 
-  roomsContainer.innerHTML = "";
+    const roomsContainer = document.getElementById("rooms");
 
-  let occupied = 0;
-
-  for (let roomNumber = 1; roomNumber <= TOTAL_ROOMS; roomNumber++) {
-
-    const tenant = tenants.find(
-      t => String(t.room).trim() === String(roomNumber)
-    );
-
-    const room = document.createElement("div");
-    room.className = "room";
-
-    if (tenant) {
-      occupied++;
-
-      room.innerHTML = `
-        <div class="room-icon occupied">🛏️</div>
-        <div class="room-number">Room ${roomNumber}</div>
-        <div class="tenant-name">${tenant.name || "Occupied"}</div>
-      `;
-    } else {
-      room.innerHTML = `
-        <div class="room-icon vacant">🛏️</div>
-        <div class="room-number">Room ${roomNumber}</div>
-        <div class="tenant-name">Vacant</div>
-      `;
+    if (!roomsContainer) {
+      console.error("Rooms container not found");
+      return;
     }
 
-    roomsContainer.appendChild(room);
+    roomsContainer.innerHTML = "";
+
+    let occupied = 0;
+
+    for (
+      let roomNumber = 1;
+      roomNumber <= TOTAL_ROOMS;
+      roomNumber++
+    ) {
+
+      const tenant = tenants.find(
+        t => String(t.room).trim() === String(roomNumber)
+      );
+
+      const room = document.createElement("div");
+
+      room.className = tenant
+        ? "room occupied"
+        : "room vacant";
+
+
+      if (tenant) {
+
+        occupied++;
+
+        room.innerHTML = `
+          <div class="room-title">
+            <h3>Room ${roomNumber}</h3>
+            <span class="status occupied">Occupied</span>
+          </div>
+
+          <div class="tenant-info">
+            <strong>Name:</strong>
+            ${escapeHTML(tenant.name || "Tenant")}
+            <br>
+
+            <strong>Phone:</strong>
+            ${escapeHTML(tenant.phone || "Not provided")}
+            <br>
+
+            <strong>Rent:</strong>
+            ${tenant.rent || "Not provided"}
+            <br>
+
+            <strong>Move-in:</strong>
+            ${tenant.move_in || "Not provided"}
+          </div>
+
+          <button
+            class="delete-btn"
+            onclick="deleteTenant('${tenant.id}')">
+            Remove Tenant
+          </button>
+        `;
+
+      } else {
+
+        room.innerHTML = `
+          <div class="room-title">
+            <h3>Room ${roomNumber}</h3>
+            <span class="status vacant">Vacant</span>
+          </div>
+
+          <div class="tenant-info">
+            This room is currently vacant.
+          </div>
+
+          <button
+            class="add-btn"
+            onclick="openModal(${roomNumber})">
+            Add Tenant
+          </button>
+        `;
+      }
+
+
+      roomsContainer.appendChild(room);
+    }
+
+
+    /* UPDATE DASHBOARD NUMBERS */
+
+    const occupiedElement =
+      document.getElementById("occupiedCount");
+
+    const vacantElement =
+      document.getElementById("vacantCount");
+
+
+    if (occupiedElement) {
+      occupiedElement.textContent = occupied;
+    }
+
+    if (vacantElement) {
+      vacantElement.textContent =
+        TOTAL_ROOMS - occupied;
+    }
   }
 
-  const occupiedElement = document.getElementById("occupied");
-  const vacantElement = document.getElementById("vacant");
-
-  if (occupiedElement) {
-    occupiedElement.textContent = occupied;
-  }
-
-  if (vacantElement) {
-    vacantElement.textContent = TOTAL_ROOMS - occupied;
-  }
-}
-  
 
   /* =====================================================
      OPEN ADD TENANT WINDOW
@@ -401,7 +460,8 @@ function displayRooms() {
 
   function openModal(roomNumber) {
 
-    document.getElementById("selectedRoom").value = roomNumber;
+    document.getElementById("selectedRoom").value =
+      roomNumber;
 
     document.getElementById("modalTitle").textContent =
       "Add Tenant — Room " + roomNumber;
@@ -436,10 +496,12 @@ function displayRooms() {
       document.getElementById("selectedRoom").value;
 
     const name =
-      document.getElementById("tenantName").value.trim();
+      document.getElementById("tenantName")
+        .value.trim();
 
     const phone =
-      document.getElementById("tenantPhone").value.trim();
+      document.getElementById("tenantPhone")
+        .value.trim();
 
     const rent =
       document.getElementById("tenantRent").value;
@@ -460,6 +522,8 @@ function displayRooms() {
       .from("tenants")
       .insert({
 
+        name: name,
+
         room: room,
 
         rent: rent || null,
@@ -467,7 +531,6 @@ function displayRooms() {
         phone: phone || null,
 
         move_in: moveIn || null
-
       });
 
 
@@ -476,7 +539,8 @@ function displayRooms() {
       console.error(error);
 
       alert(
-        "Could not save tenant. Check your Supabase table permissions."
+        "Could not save tenant: " +
+        error.message
       );
 
       return;
@@ -513,7 +577,10 @@ function displayRooms() {
 
       console.error(error);
 
-      alert("Could not remove tenant.");
+      alert(
+        "Could not remove tenant: " +
+        error.message
+      );
 
       return;
     }
@@ -545,6 +612,3 @@ function displayRooms() {
   loadTenants();
 
 </script>
-
-</body>
-</html>
