@@ -274,11 +274,11 @@
 </head>
 
 <body>
-<body>
 
 <div id="loginScreen">
   <div class="loginBox">
     <h2>Hostel Manager</h2>
+<button onclick="logout()">Logout</button>
     <p>Login to continue</p>
 
     <input type="email" id="loginEmail" placeholder="Email" autocomplete="username">
@@ -711,6 +711,17 @@ console.log("LOGIN FUNCTION STARTED");
     loadTenants();
   }
 });
+  async function logout() {
+  const { error } = await supabaseClient.auth.signOut();
+
+  if (error) {
+    console.error("Logout error:", error);
+    alert("Could not log out.");
+    return;
+  }
+
+  document.getElementById("loginScreen").style.display = "flex";
+}
 </script>
   
 
