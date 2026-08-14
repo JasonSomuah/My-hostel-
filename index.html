@@ -705,6 +705,12 @@ console.log("LOGIN FUNCTION STARTED");
 
   await loadTenants();
 }
+  supabaseClient.auth.getSession().then(({ data }) => {
+  if (data.session) {
+    document.getElementById("loginScreen").style.display = "none";
+    loadTenants();
+  }
+});
 </script>
   
 
